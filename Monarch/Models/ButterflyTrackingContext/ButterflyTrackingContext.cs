@@ -8,6 +8,7 @@ namespace Monarch.Models.ButterflyTrackingContext
 {
     public class ButterflyTrackingContext : DbContext
     {
+        // this comment was added on another machine
         public ButterflyTrackingContext() : base("ButterflyTrackingContext") {
             Database.CommandTimeout = 200;
         }
