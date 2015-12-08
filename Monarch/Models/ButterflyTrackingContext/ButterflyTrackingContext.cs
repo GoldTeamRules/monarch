@@ -9,7 +9,7 @@ namespace Monarch.Models.ButterflyTrackingContext
     public class ButterflyTrackingContext : DbContext
     {
         public ButterflyTrackingContext() : base("ButterflyTrackingContext") {
-            Database.CommandTimeout = 180;
+            Database.CommandTimeout = 200;
         }
 
         public DbSet<Butterfly> Butterflies { get; set; }
