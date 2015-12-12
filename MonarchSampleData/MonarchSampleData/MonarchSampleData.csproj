@@ -40,6 +40,10 @@
       <HintPath>..\packages\Geocoding.net.3.3.0\lib\net40\Geocoding.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SimpleFixedWidthParser, Version=0.9.5823.26939, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleFixedWidthParser.0.9.5823.26939\lib\net452\SimpleFixedWidthParser.exe</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

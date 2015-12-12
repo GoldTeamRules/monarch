@@ -1,8 +1,10 @@
 ﻿using Geocoding.Google;
+using SimpleFixedWidthParser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -958,6 +960,8 @@ namespace MonarchSampleData
 
         static void Main(string[] args)
         {
+
+
             GoogleGeocoder geocoder = new GoogleGeocoder();
             var sampleData = new List<SampleDataThing> { GetSampleData().First(), GetSampleData().Last() };
 
@@ -1095,7 +1099,121 @@ namespace MonarchSampleData
 
             foreach (var reporter in reporters)
                 Console.WriteLine(reporter);
-            
+
+            Regex digitsOnly = new Regex(@"[^\d]"); // this to remove non-numerical characters for phone numbers
+            int dummyInt; // dummy int for int.TryParse(...)
+            double dummyDouble; // dummy double for long.TryParse(...)
+            DateTime dummyDate; // dummy date for DateTime.TryParse(...)
+
+            // create a new FixedWidthFile
+            var sightingsFile = new FixedWidthParser
+            (
+                filePath: "sightings.txt",
+                columnDefintions: new List<dynamic> // note this list is defined by the dynamic keyword
+                {
+                    new FixedWidthColumn<string>
+                    (
+                        key: "Event",
+                        length: 2,
+                        conversionFromStringToDataType: dataString => dataString,
+                        conversionFromDataToString: data => data,
+                        conformanceTest: stringToTest => true
+                    ),
+                    new FixedWidthColumn<string>
+                    (
+                        key: "UserName",
+                        length: 30,
+                        conversionFromStringToDataType: dataString => dataString,
+                        conversionFromDataToString: data => data,
+                        conformanceTest: stringToTest => true
+                    ),
+                    new FixedWidthColumn<DateTime>
+                    (
+                        key: "DateTime",
+                        length: 19,
+                        conversionFromStringToDataType: dataString => DateTime.Parse(dataString),
+                        conversionFromDataToString: data => data.ToString(@"yyyy-MM-dd H:mm:ss "),
+                        conformanceTest: stringToTest => DateTime.TryParse(stringToTest, out dummyDate)
+                        //nullable: false
+                    ),
+                    new FixedWidthColumn<double>
+                    (
+                        key: "Latitude",
+                        length: 11,
+                        conversionFromStringToDataType: dataString => double.Parse(dataString),
+                        conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                        conformanceTest: stringToTest => double.TryParse(digitsOnly.Replace(stringToTest, ""), out dummyDouble)
+                        //nullable: false
+                    ),
+                    new FixedWidthColumn<double>
+                    (
+                        key: "Longitude",
+                        length: 11,
+                        conversionFromStringToDataType: dataString => double.Parse(dataString),
+                        conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                        conformanceTest: stringToTest => double.TryParse(digitsOnly.Replace(stringToTest, ""), out dummyDouble)
+                        //nullable: false
+                    ),
+                    new FixedWidthColumn<string>
+                    (
+                        key: "City",
+                        length: 30,
+                        conversionFromStringToDataType: dataString => dataString,
+                        conversionFromDataToString: data => " " + data,
+                        conformanceTest: stringToTest => true
+                    ),
+                    new FixedWidthColumn<string>
+                    (
+                        key: "State",
+                        length: 30,
+                        conversionFromStringToDataType: dataString => dataString,
+                        conversionFromDataToString: data => data,
+                        conformanceTest: stringToTest => true
+                    ),
+                    new FixedWidthColumn<string>
+                    (
+                        key: "Country",
+                        length: 30,
+                        conversionFromStringToDataType: dataString => dataString,
+                        conversionFromDataToString: data => data,
+                        conformanceTest: stringToTest => true
+                    ),
+                    new FixedWidthColumn<string>
+                    (
+                        key: "Species",
+                        length: 20,
+                        conversionFromStringToDataType: dataString => dataString,
+                        conversionFromDataToString: data => data,
+                        conformanceTest: stringToTest => true
+                    ),
+                    new FixedWidthColumn<int>
+                    (
+                        key: "Tag",
+                        length: 11,
+                        conversionFromStringToDataType: dataString => int.Parse(dataString),
+                        conversionFromDataToString: data => data.ToString(),
+                        conformanceTest: stringToTest => int.TryParse(stringToTest, out dummyInt)
+                    ),
+                }
+            );
+
+
+            foreach (var sighting in humanSightings)
+            {
+                sightingsFile.Add
+                (
+                    keys:
+                        new string[] { "Event", "UserName", "Latitude", "Longitude",
+                        "Species", "State", "City", "Country", "DateTime" },
+                    values:
+                        new object[] { "S", sighting.UserName, sighting.Latitude,
+                        sighting.Longitude, sighting.Species, sighting.StateProvince,
+                        sighting.City, sighting.Country, sighting.DateTime }
+                );
+            }
+            sightingsFile.HeaderLead = "HD";
+            sightingsFile.Write();
+
         }
     }
 }
