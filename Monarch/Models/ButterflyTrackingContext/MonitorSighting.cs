@@ -16,7 +16,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         [Required]
         public int ButterflyId { get; set; }
 
-        public int SightingFileUploadId { get; set; }
+        public int? SightingFileUploadId { get; set; }
 
         [Required]
         public DateTime DateTime { get; set; }

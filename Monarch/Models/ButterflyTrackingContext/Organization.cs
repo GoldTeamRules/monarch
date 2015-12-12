@@ -13,7 +13,6 @@ namespace Monarch.Models.ButterflyTrackingContext
         [Required]
         public string OwnerId { get; set; }
         [Required]
-        [Index(IsUnique = true)]
         public string UniqueName { get; set; }
         public string DisplayName { get; set; }
         public string Description { get; set; }

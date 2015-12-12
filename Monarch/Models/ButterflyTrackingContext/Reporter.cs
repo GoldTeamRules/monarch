@@ -12,7 +12,6 @@ namespace Monarch.Models.ButterflyTrackingContext
         public int ReporterId { get; set; }
         public string Name { get; set; }
         [Required]
-        [Index(IsUnique = true)]
         public string UserName { get; set; }
 
         public int? UserFileUploadId { get; set; }

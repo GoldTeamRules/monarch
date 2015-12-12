@@ -16,7 +16,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         [Required]
         public string Species { get; set; }
         // FK
-        public int SightingFileUploadId { get; set; }
+        public int? SightingFileUploadId { get; set; }
 
         // these do not represent the current location of the butterfly
         // but the location of the inital tagging

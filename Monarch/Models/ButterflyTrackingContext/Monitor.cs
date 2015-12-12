@@ -16,7 +16,6 @@ namespace Monarch.Models.ButterflyTrackingContext
 
         // required fields
         [Required]
-        [Index(IsUnique = true)]
         public string UniqueName { get; set; }
         [Required]
         public double Latitude { get; set; }

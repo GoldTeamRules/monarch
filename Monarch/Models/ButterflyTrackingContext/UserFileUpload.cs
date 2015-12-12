@@ -10,7 +10,7 @@ namespace Monarch.Models.ButterflyTrackingContext
     {
         public int UserFileUploadId { get; set; }
         [Required]
-        public int ReporterId { get; set; }
+        public Guid UserId { get; set; }
         [Required]
         public DateTime DateTime { get; set; }
 
