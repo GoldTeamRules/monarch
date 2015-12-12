@@ -1,26 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
 namespace Monarch.Models.ButterflyTrackingContext
 {
-    public class Organization
+    public class ReporterDetail
     {
+        public int ReporterDetailId { get; set; }
+        public int ReporterId { get; set; }
         public int OrganizationId { get; set; }
-        [Required]
-        public string OwnerId { get; set; }
-        [Required]
-        [Index(IsUnique = true)]
-        public string UniqueName { get; set; }
-        public string DisplayName { get; set; }
-        public string Description { get; set; }
-        public string WebsiteUrl { get; set; }
-        public string LogoUrl { get; set; }
-
-        public virtual Reporter Owner { get; set; }
+        public virtual Organization Organization { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -29,18 +19,18 @@ namespace Monarch.Models.ButterflyTrackingContext
                 return false;
 
             // If parameter cannot be cast to Point return false.
-            var details = obj as Organization;
+            var details = obj as ReporterDetail;
             if (details == null)
                 return false;
 
             // Return true if the fields match:
-            return OrganizationId == details.OrganizationId;
+            return ReporterDetailId == details.ReporterDetailId;
         }
 
         // override hashcode to be just the reporter id (used for hashsets)
         public override int GetHashCode()
         {
-            return OrganizationId;
+            return ReporterDetailId;
         }
     }
 }

@@ -49,20 +49,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="mysql.data, Version=6.8.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\mysql-connector-net-6.0.7-noinstall\mysql.data.dll</HintPath>
-    </Reference>
-    <Reference Include="mysql.data.entity">
-      <HintPath>..\packages\mysql-connector-net-6.0.7-noinstall\mysql.data.entity.dll</HintPath>
-    </Reference>
-    <Reference Include="mysql.visualstudio">
-      <HintPath>..\packages\mysql-connector-net-6.0.7-noinstall\mysql.visualstudio.dll</HintPath>
-    </Reference>
-    <Reference Include="mysql.web, Version=6.8.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\mysql-connector-net-6.0.7-noinstall\mysql.web.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
@@ -183,9 +169,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\ButterfliesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\HumanSightingsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -194,13 +178,14 @@
     <Compile Include="Models\ButterflyTrackingContext\Butterfly.cs" />
     <Compile Include="Models\ButterflyTrackingContext\ButterflyTrackingContext.cs" />
     <Compile Include="Models\ButterflyTrackingContext\ButterflyTrackingInitializer.cs" />
-    <Compile Include="Models\ButterflyTrackingContext\FileUpload.cs" />
-    <Compile Include="Models\ButterflyTrackingContext\HumanSighting.cs" />
-    <Compile Include="Models\ButterflyTrackingContext\MachineMonitor.cs" />
-    <Compile Include="Models\ButterflyTrackingContext\MachineSighting.cs" />
+    <Compile Include="Models\ButterflyTrackingContext\ReporterSighting.cs" />
+    <Compile Include="Models\ButterflyTrackingContext\Monitor.cs" />
+    <Compile Include="Models\ButterflyTrackingContext\MonitorSighting.cs" />
     <Compile Include="Models\ButterflyTrackingContext\Organization.cs" />
-    <Compile Include="Models\ButterflyTrackingContext\Person.cs" />
-    <Compile Include="Models\ButterflyTrackingContext\PersonDetail.cs" />
+    <Compile Include="Models\ButterflyTrackingContext\Reporter.cs" />
+    <Compile Include="Models\ButterflyTrackingContext\ReporterDetail.cs" />
+    <Compile Include="Models\ButterflyTrackingContext\SightingFileUpload.cs" />
+    <Compile Include="Models\ButterflyTrackingContext\UserFileUpload.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
