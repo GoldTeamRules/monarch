@@ -21,9 +21,37 @@ namespace MonarchSampleData
         }
     }
 
+    struct Person
+    {
+        public string Name { get; set; }
+        public string UserName { get; set; }
+        public string StreetAddress { get; set; }
+        public string PostalCode { get; set; }
+        public string HomePhone { get; set; }
+        public string CellPhone { get; set; }
+        public string Organization { get; set; }
+    }
+
+    struct HumanSighting
+    {
+        public string UserName { get; set; }
+        public DateTime DateTime { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public string City { get; set; }
+        public string StateProvince { get; set; }
+        public string Country { get; set; }
+        public string Species { get; set; }
+    }
+
     class Program
     {
-
+        static string[] Organizations = { "Butterflies-R-Us", "Journey-North",  "Earthbound", "Mother", "Hoppipolla" };
+        static Random rand;
+        /// <summary>
+        /// Thank you https://www.learner.org/cgi-bin/jnorth/jn-query-byday
+        /// </summary>
+        /// <returns></returns>
         static List<SampleDataThing> GetSampleData()
         {
             return new List<SampleDataThing>
@@ -512,6 +540,18 @@ namespace MonarchSampleData
             };
         }
 
+        static string GenerateRandomOrganization()
+        {
+            if (rand == null)
+                rand = new Random();
+            return Organizations[rand.Next(Organizations.Length - 1)];
+        }
+
+        static string GenerateRandomStreetAddress()
+        {
+
+        }
+
         static void Main(string[] args)
         {
             GoogleGeocoder geocoder = new GoogleGeocoder();
@@ -524,7 +564,8 @@ namespace MonarchSampleData
             //}
 
             IEnumerable<GoogleAddress> addresses = geocoder.ReverseGeocode(sampleData[0].Latitude, sampleData[0].Longitude);
-            Console.WriteLine(addresses.First());
+            Console.WriteLine(addresses.First().Components.First().ShortName);
+            Console.WriteLine(sampleData[0].DateTime);
 
             if (System.Diagnostics.Debugger.IsAttached)
             {
