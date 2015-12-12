@@ -1,0 +1,58 @@
+﻿@model Monarch.Models.ButterflyTrackingContext.MonitorSighting
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>MonitorSighting</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Butterfly.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Butterfly.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Monitor.UniqueName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Monitor.UniqueName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SightingFileUpload.SightingFileUploadId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SightingFileUpload.SightingFileUploadId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FileUploadId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FileUploadId)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.MonitorSightingId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

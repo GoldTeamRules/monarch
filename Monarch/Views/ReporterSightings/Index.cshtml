@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Monarch.Models.ButterflyTrackingContext.ReporterSighting>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Reporter.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SightingFileUpload.SightingFileUploadId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Latitude)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Longitude)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.City)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StateProvince)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Country)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PostalCode)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Reporter.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SightingFileUpload.SightingFileUploadId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Latitude)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Longitude)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.City)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.StateProvince)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Country)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PostalCode)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ReporterSightingId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ReporterSightingId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ReporterSightingId })
+        </td>
+    </tr>
+}
+
+</table>
