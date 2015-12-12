@@ -14,7 +14,8 @@ namespace Monarch.Models.ButterflyTrackingContext
         }
 
         public DbSet<Butterfly> Butterflies { get; set; }
-        public DbSet<FileUpload> FileUploads { get; set; }
+        public DbSet<SightingFileUpload> SightingFileUploads { get; set; }
+        public DbSet<UserFileUpload> UserFileUploads { get; set; }
         public DbSet<ReporterSighting> HumanSightings { get; set; }
         public DbSet<Monitor> MachineMonitors { get; set; }
         public DbSet<MonitorSighting> MachineSightings { get; set; }
