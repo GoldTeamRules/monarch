@@ -177,8 +177,10 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MonitorsController.cs" />
+    <Compile Include="Controllers\MonitorSightingsController.cs" />
     <Compile Include="Controllers\OrganizationsController.cs" />
     <Compile Include="Controllers\ReportersController.cs" />
+    <Compile Include="Controllers\ReporterSightingsController.cs" />
     <Compile Include="Controllers\SightingFileUploadsController.cs" />
     <Compile Include="Controllers\UserFileUploadsController.cs" />
     <Compile Include="Global.asax.cs">
@@ -289,6 +291,16 @@
     <Content Include="Views\UserFileUploads\Details.cshtml" />
     <Content Include="Views\UserFileUploads\Edit.cshtml" />
     <Content Include="Views\UserFileUploads\Index.cshtml" />
+    <Content Include="Views\ReporterSightings\Create.cshtml" />
+    <Content Include="Views\ReporterSightings\Delete.cshtml" />
+    <Content Include="Views\ReporterSightings\Details.cshtml" />
+    <Content Include="Views\ReporterSightings\Edit.cshtml" />
+    <Content Include="Views\ReporterSightings\Index.cshtml" />
+    <Content Include="Views\MonitorSightings\Create.cshtml" />
+    <Content Include="Views\MonitorSightings\Delete.cshtml" />
+    <Content Include="Views\MonitorSightings\Details.cshtml" />
+    <Content Include="Views\MonitorSightings\Edit.cshtml" />
+    <Content Include="Views\MonitorSightings\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
