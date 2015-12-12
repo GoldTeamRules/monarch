@@ -172,6 +172,8 @@
     <Compile Include="Controllers\ButterfliesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MonitorsController.cs" />
+    <Compile Include="Controllers\ReportersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -255,6 +257,16 @@
     <Content Include="Views\Butterflies\Details.cshtml" />
     <Content Include="Views\Butterflies\Edit.cshtml" />
     <Content Include="Views\Butterflies\Index.cshtml" />
+    <Content Include="Views\Reporters\Create.cshtml" />
+    <Content Include="Views\Reporters\Delete.cshtml" />
+    <Content Include="Views\Reporters\Details.cshtml" />
+    <Content Include="Views\Reporters\Edit.cshtml" />
+    <Content Include="Views\Reporters\Index.cshtml" />
+    <Content Include="Views\Monitors\Create.cshtml" />
+    <Content Include="Views\Monitors\Delete.cshtml" />
+    <Content Include="Views\Monitors\Details.cshtml" />
+    <Content Include="Views\Monitors\Edit.cshtml" />
+    <Content Include="Views\Monitors\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

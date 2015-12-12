@@ -1,0 +1,87 @@
+﻿@model IEnumerable<Monarch.Models.ButterflyTrackingContext.Monitor>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Organization.OwnerId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserFileUpload.UserFileUploadId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UniqueName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Latitude)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Longitude)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DisplayName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.City)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StateProvince)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Country)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PostalCode)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Organization.OwnerId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserFileUpload.UserFileUploadId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UniqueName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Latitude)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Longitude)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DisplayName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.City)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.StateProvince)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Country)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PostalCode)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.MonitorId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.MonitorId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.MonitorId })
+        </td>
+    </tr>
+}
+
+</table>
