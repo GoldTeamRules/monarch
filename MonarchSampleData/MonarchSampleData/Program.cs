@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MonarchSampleData
@@ -21,7 +22,7 @@ namespace MonarchSampleData
         }
     }
 
-    struct Person
+    struct Reporter
     {
         public string Name { get; set; }
         public string UserName { get; set; }
@@ -30,6 +31,21 @@ namespace MonarchSampleData
         public string HomePhone { get; set; }
         public string CellPhone { get; set; }
         public string Organization { get; set; }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Name: " + Name);
+            sb.AppendLine("UserName: " + UserName);
+            sb.AppendLine("StreetAddress: " + StreetAddress);
+            sb.AppendLine("PostalCode: " + PostalCode);
+            sb.AppendLine("HomePhone: " + HomePhone);
+            sb.AppendLine("CellPhone: " + CellPhone);
+            sb.AppendLine("Organization: " + Organization);
+
+            return sb.ToString();
+        }
     }
 
     struct HumanSighting
@@ -42,12 +58,56 @@ namespace MonarchSampleData
         public string StateProvince { get; set; }
         public string Country { get; set; }
         public string Species { get; set; }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            
+            sb.AppendLine("UserName: " + UserName);
+            sb.AppendLine("DateTime: " + DateTime);
+            sb.AppendLine("Latitude: " + Latitude);
+            sb.AppendLine("Longitude: " + Longitude);
+            sb.AppendLine("City: " + City);
+            sb.AppendLine("StateProvince: " + StateProvince);
+            sb.AppendLine("Country: " + Country);
+            sb.AppendLine("Species: " + Species);
+
+            return sb.ToString();
+        }
+    }
+
+    struct CityState
+    {
+        public string City { get; set; }
+        public string State { get; set; }
+        public CityState(string city, string state)
+        {
+            City = city.ToLower();
+            State = state.ToLower();
+        }
+
+        public override int GetHashCode()
+        {
+            return (City + State).GetHashCode();
+        }
+    }
+
+    struct FirstLast
+    {
+        public string First { get; set; }
+        public string Last { get; set; }
+        public FirstLast(string first, string last)
+        {
+            First = first;
+            Last = last;
+        }
     }
 
     class Program
     {
         static string[] Organizations = { "Butterflies-R-Us", "Journey-North",  "Earthbound", "Mother", "Hoppipolla" };
         static Random rand;
+
         /// <summary>
         /// Thank you https://www.learner.org/cgi-bin/jnorth/jn-query-byday
         /// </summary>
@@ -540,38 +600,502 @@ namespace MonarchSampleData
             };
         }
 
-        static string GenerateRandomOrganization()
+        static List<FirstLast> GetListOfFirstLastNames()
         {
+            return new List<FirstLast>
+            {
+                 new FirstLast("Antoinette","Davis"),
+                 new FirstLast("Melba","Rice"),
+                 new FirstLast("Jordan","Taylor"),
+                 new FirstLast("Duane","Pena"),
+                 new FirstLast("Paulette","Lowe"),
+                 new FirstLast("Cecelia","Hampton"),
+                 new FirstLast("Amelia","Hicks"),
+                 new FirstLast("Joe","Tate"),
+                 new FirstLast("Lynette","Woods"),
+                 new FirstLast("Harvey","Russell"),
+                 new FirstLast("Margie","Wells"),
+                 new FirstLast("Lewis","Harvey"),
+                 new FirstLast("Gustavo","Warren"),
+                 new FirstLast("Constance","Lambert"),
+                 new FirstLast("Alexis","Robinson"),
+                 new FirstLast("Inez","Hale"),
+                 new FirstLast("Sheryl","Barber"),
+                 new FirstLast("Rose","Moreno"),
+                 new FirstLast("Erick","Lucas"),
+                 new FirstLast("Bruce","Sanchez"),
+                 new FirstLast("Heather","Gordon"),
+                 new FirstLast("Patti","Edwards"),
+                 new FirstLast("Dave","Hunter"),
+                 new FirstLast("William","Cook"),
+                 new FirstLast("Joshua","Cain"),
+                 new FirstLast("Billy","Torres"),
+                 new FirstLast("Carolyn","Soto"),
+                 new FirstLast("Archie","Lawrence"),
+                 new FirstLast("Elizabeth","Barnett"),
+                 new FirstLast("Ana","Lee"),
+                 new FirstLast("Jim","Sutton"),
+                 new FirstLast("Lula","May"),
+                 new FirstLast("Dianne","Clarke"),
+                 new FirstLast("Monique","Berry"),
+                 new FirstLast("Brandon","Powers"),
+                 new FirstLast("Myron","Owen"),
+                 new FirstLast("Audrey","Jordan"),
+                 new FirstLast("Bryant","Vargas"),
+                 new FirstLast("Terrell","Marshall"),
+                 new FirstLast("Ruben","Doyle"),
+                 new FirstLast("Ricky","Huff"),
+                 new FirstLast("Hubert","Romero"),
+                 new FirstLast("Philip","Mccoy"),
+                 new FirstLast("Willie","Bryan"),
+                 new FirstLast("Mindy","Perry"),
+                 new FirstLast("Lydia","Murphy"),
+                 new FirstLast("Bill","Hill"),
+                 new FirstLast("Michael","Guerrero"),
+                 new FirstLast("Bessie","Castillo"),
+                 new FirstLast("Shannon","Yates"),
+                 new FirstLast("Stephen","Walton"),
+                 new FirstLast("Francis","Andrews"),
+                 new FirstLast("Kelvin","Paul"),
+                 new FirstLast("Tommie","Roy"),
+                 new FirstLast("Lisa","Vega"),
+                 new FirstLast("Elbert","Kelley"),
+                 new FirstLast("Clark","King"),
+                 new FirstLast("Tammy","Wong"),
+                 new FirstLast("Geraldine","Martin"),
+                 new FirstLast("Dean","Walters"),
+                 new FirstLast("Renee","Keller"),
+                 new FirstLast("Curtis","Frazier"),
+                 new FirstLast("Shane","Jimenez"),
+                 new FirstLast("Rodney","Cunningham"),
+                 new FirstLast("Aubrey","Rogers"),
+                 new FirstLast("Tricia","Payne"),
+                 new FirstLast("Norma","Garza"),
+                 new FirstLast("Marsha","Saunders"),
+                 new FirstLast("Wendy","Morrison"),
+                 new FirstLast("Jenny","Howard"),
+                 new FirstLast("Tabitha","Clark"),
+                 new FirstLast("Earnest","Greer"),
+                 new FirstLast("Randall","Mason"),
+                 new FirstLast("Hazel","Rodriquez"),
+                 new FirstLast("Kent","Bennett"),
+                 new FirstLast("Julia","Bowman"),
+                 new FirstLast("Alicia","Wolfe"),
+                 new FirstLast("Robert","Cortez"),
+                 new FirstLast("Felipe","Banks"),
+                 new FirstLast("Emily","Morales"),
+                 new FirstLast("Carlton","Fleming"),
+                 new FirstLast("Herbert","Caldwell"),
+                 new FirstLast("Wilbur","Williams"),
+                 new FirstLast("Frankie","Brock"),
+                 new FirstLast("Paul","Ruiz"),
+                 new FirstLast("Nina","Peters"),
+                 new FirstLast("Beverly","Leonard"),
+                 new FirstLast("Kathleen","Franklin"),
+                 new FirstLast("Jack","Barton"),
+                 new FirstLast("Victoria","Swanson"),
+                 new FirstLast("Jody","Thornton"),
+                 new FirstLast("Mona","Holmes"),
+                 new FirstLast("Marilyn","Sanders"),
+                 new FirstLast("Chester","Campbell"),
+                 new FirstLast("Manuel","Daniel"),
+                 new FirstLast("Bob","Alvarez"),
+                 new FirstLast("Josefina","Wheeler"),
+                 new FirstLast("Mark","Sparks"),
+                 new FirstLast("Kyle","Clayton"),
+                 new FirstLast("Brian","Johnston")
+            };
+        }
+
+        static List<string> GetListOfRandomStreetNames()
+        {
+            return new List<string>
+            {
+                "College Street",
+                "Laurel Lane",
+                "Overlook Circle",
+                "Euclid Avenue",
+                "Route 64",
+                "Hanover Court",
+                "Pin Oak Drive",
+                "Strawberry Lane",
+                "Fulton Street",
+                "King Street",
+                "Hillside Drive",
+                "Briarwood Court",
+                "Chestnut Avenue",
+                "West Street",
+                "Riverside Drive",
+                "Route 2",
+                "Park Avenue",
+                "Chapel Street",
+                "5th Street West",
+                "York Street",
+                "Linda Lane",
+                "George Street",
+                "Brown Street",
+                "Canterbury Drive",
+                "4th Street",
+                "9th Street West",
+                "Highland Avenue",
+                "8th Street West",
+                "Route 41",
+                "Queen Street",
+                "6th Street",
+                "Street Road",
+                "Elm Street",
+                "5th Avenue",
+                "Spruce Street",
+                "Forest Street",
+                "Cardinal Drive",
+                "Buttonwood Drive",
+                "Edgewood Road",
+                "Lincoln Avenue",
+                "Valley Drive",
+                "Summit Avenue",
+                "Marshall Street",
+                "Route 202",
+                "4th Street South",
+                "Union Street",
+                "Mechanic Street",
+                "Mill Street",
+                "Madison Court",
+                "Jefferson Street",
+                "5th Street East",
+                "Sunset Drive",
+                "Hillcrest Drive",
+                "Mulberry Lane",
+                "Garfield Avenue",
+                "Cherry Street",
+                "Willow Street",
+                "Grove Avenue",
+                "Summer Street",
+                "South Street",
+                "Cleveland Street",
+                "Schoolhouse Lane",
+                "Ivy Court",
+                "Oak Street",
+                "3rd Street West",
+                "Railroad Avenue",
+                "Oak Avenue",
+                "Berkshire Drive",
+                "8th Street",
+                "Church Street",
+                "Holly Drive",
+                "Heather Court",
+                "Route 4",
+                "Windsor Court",
+                "2nd Street North",
+                "8th Avenue",
+                "8th Street South",
+                "Lafayette Street",
+                "Howard Street",
+                "Belmont Avenue",
+                "Jones Street",
+                "7th Street",
+                "Heritage Drive",
+                "Ashley Court",
+                "Surrey Lane",
+                "Westminster Drive",
+                "Manor Drive",
+                "Park Place",
+                "Hamilton Road",
+                "Fawn Court",
+                "Glenwood Drive",
+                "Vine Street",
+                "2nd Street West",
+                "York Road",
+                "Fawn Lane",
+                "Hawthorne Lane",
+                "Franklin Avenue",
+                "Market Street",
+                "Walnut Avenue",
+                "11th Street",
+                "Taylor Street",
+                "Clark Street",
+                "Grove Street",
+                "1st Avenue",
+                "Lakeview Drive",
+                "6th Street North",
+                "Jefferson Avenue",
+                "Ridge Avenue",
+                "Brandywine Drive",
+                "Woodland Road",
+                "Creekside Drive",
+                "Elmwood Avenue",
+                "Pearl Street",
+                "Highland Drive",
+                "Oxford Court",
+                "Summit Street",
+                "Hamilton Street",
+                "Cedar Lane",
+                "Walnut Street",
+                "Roberts Road",
+                "5th Street South",
+                "Charles Street",
+                "Bank Street",
+                "Durham Road",
+                "Roosevelt Avenue",
+                "William Street",
+                "Route 10",
+                "Evergreen Drive",
+                "5th Street",
+                "Broad Street",
+                "Route 1",
+                "Main Street North",
+                "North Street",
+                "Lawrence Street",
+                "John Street",
+                "Sycamore Lane",
+                "Madison Avenue",
+                "Buckingham Drive",
+                "State Street East",
+                "Main Street South",
+                "Henry Street",
+                "Essex Court",
+                "Hartford Road",
+                "2nd Street East",
+                "Creek Road",
+                "Dogwood Drive",
+                "Somerset Drive",
+                "Route 32",
+                "Bayberry Drive",
+                "Rosewood Drive",
+                "Lake Street",
+                "Court Street",
+                "Mill Road",
+                "Maiden Lane",
+                "Magnolia Drive",
+                "Dogwood Lane",
+                "Front Street South",
+                "Magnolia Court",
+                "Forest Drive",
+                "Parker Street",
+                "Orange Street",
+                "River Street",
+                "Victoria Court",
+                "2nd Avenue",
+                "Devon Road",
+                "Monroe Drive",
+                "Meadow Street",
+                "Sheffield Drive",
+                "Grand Avenue",
+                "Orchard Street",
+                "7th Avenue",
+                "Laurel Drive",
+                "Washington Avenue",
+                "Ridge Street",
+                "Route 27",
+                "Broad Street West",
+                "Orchard Avenue",
+                "Valley Road",
+                "Franklin Court",
+                "Cherry Lane",
+                "Bay Street",
+                "4th Street North",
+                "6th Street West",
+                "Oxford Road",
+                "13th Street",
+                "Heather Lane",
+                "Andover Court",
+                "Circle Drive",
+                "Route 9",
+                "Ivy Lane",
+                "West Avenue",
+                "Hill Street",
+                "Jackson Street",
+                "Cottage Street",
+                "Virginia Avenue",
+                "Pine Street",
+                "Canterbury Court",
+                "Smith Street",
+                "Primrose Lane",
+                "6th Avenue"
+            };
+        }
+
+        static string GetRandomOrganization()
+        {
+            // lazy load the static random object
             if (rand == null)
                 rand = new Random();
+            // return a random org
             return Organizations[rand.Next(Organizations.Length - 1)];
         }
 
         static string GenerateRandomStreetAddress()
         {
+            return "";
+        }
 
+        static string RandomPhone()
+        {
+            // lazy load the static random object
+            if (rand == null)
+                rand = new Random();
+
+            // first three digits is the same random number 1-9
+            int areaCodeNum = rand.Next(1, 9);
+            string areaCode = string.Format("{0}{1}{2}", areaCodeNum, areaCodeNum, areaCodeNum);
+            string phoneNumber1 = string.Format("{0:D3}", rand.Next(1,999));
+            string phoneNumber2 = string.Format("{0:D4}", rand.Next(1, 999));
+            return string.Format("{0}-{1}-{2}", areaCode, phoneNumber1, phoneNumber2);
+        }
+
+        static IEnumerable<GoogleAddress> GetGeocodingResult(GoogleGeocoder geocoder, double latitude, double longitude)
+        {
+            Thread.Sleep(200);
+            try
+            {
+                return geocoder.ReverseGeocode(latitude, longitude);
+            }
+            catch (GoogleGeocodingException e)
+            {
+                //Console.WriteLine(e.Message);
+                return GetGeocodingResult(geocoder, latitude, longitude);
+            }
         }
 
         static void Main(string[] args)
         {
             GoogleGeocoder geocoder = new GoogleGeocoder();
-            var sampleData = GetSampleData();
+            var sampleData = new List<SampleDataThing> { GetSampleData().First(), GetSampleData().Last() };
 
-            //foreach (var d in sampleData)
-            //{
-            //    IEnumerable<GoogleAddress> addresses = geocoder.ReverseGeocode(d.Latitude, d.Longitude);
-            //    Console.WriteLine(addresses);
-            //}
+            var firstLastNames = GetListOfFirstLastNames();
+            var randomStreets = GetListOfRandomStreetNames();
+            var cityStates = new HashSet<CityState>();
 
-            IEnumerable<GoogleAddress> addresses = geocoder.ReverseGeocode(sampleData[0].Latitude, sampleData[0].Longitude);
-            Console.WriteLine(addresses.First().Components.First().ShortName);
-            Console.WriteLine(sampleData[0].DateTime);
-
-            if (System.Diagnostics.Debugger.IsAttached)
+            var reporters = new List<Reporter>();
+            var humanSightings = new List<HumanSighting>();
+            
+            foreach (var data in sampleData)
             {
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+
+                // call google geocoding API to reverse geocode the a latitude and longitude set
+                var addresses = GetGeocodingResult(geocoder, data.Latitude, data.Longitude);
+                
+                // create a list components 
+                var components = addresses.First().Components;
+
+                // iterate through all components
+                string city = "";
+                string state = "";
+                string postalCode = "";
+                string country = "";
+                foreach (var comp in components)
+                {
+                    
+                    // for each GoogleAddressType of the component
+                    foreach (var type in comp.Types)
+                    {
+                        // If there's a city assign it
+                        if (type.Equals(GoogleAddressType.Locality))
+                        {
+                            if (string.IsNullOrEmpty(city))
+                                city = comp.LongName;
+                        }
+
+                        // if there's a state, assign it
+                        if (type.Equals(GoogleAddressType.AdministrativeAreaLevel1))
+                        {
+                            if (string.IsNullOrEmpty(state))
+                                state = comp.LongName;
+                        }
+
+                        if (type.Equals(GoogleAddressType.PostalCode))
+                        {
+                            if (string.IsNullOrEmpty(postalCode))
+                                postalCode = comp.LongName;
+                        }
+
+                        if (type.Equals(GoogleAddressType.Country))
+                        {
+                            if (string.IsNullOrEmpty(country))
+                                country = comp.LongName;
+                        }
+                    } // foreach (var type in comp.Types)
+
+
+                    
+                } // foreach (var comp in components)
+
+                // create a new City State struct
+                var newCityState = new CityState(city, state);
+
+                // then see if it's in the hashset
+                if (!cityStates.Contains(newCityState))
+                {
+                    cityStates.Add(newCityState);
+
+                    // get a random index
+                    if (rand == null)
+                        rand = new Random();
+                    int nameIndex = rand.Next(firstLastNames.Count - 1);
+                    // get the name
+                    string name = firstLastNames[nameIndex].First + " " + firstLastNames[nameIndex].Last;
+                    // then remove the name from the list
+                    firstLastNames.RemoveAt(nameIndex);
+
+                    int streetIndex = rand.Next(randomStreets.Count - 1);
+                    string streetName = randomStreets[streetIndex];
+                    randomStreets.RemoveAt(streetIndex);
+
+                    reporters.Add
+                    (
+                        new Reporter
+                        {
+                            Name = name,
+                            UserName = string.Format("{0}@email.com", name.ToLower().Replace(" ", "")),
+                            CellPhone = RandomPhone(),
+                            HomePhone = RandomPhone(),
+                            PostalCode = postalCode,
+                            Organization = GetRandomOrganization(),
+                            StreetAddress = string.Format("{0} {1}", rand.Next(1, 999), streetName)
+                        }
+                    );
+
+                    humanSightings.Add
+                    (
+                        new HumanSighting
+                        {
+                            UserName = string.Format("{0}@email.com", name.ToLower().Replace(" ", "")),
+                            City = city,
+                            StateProvince = state,
+                            Country = country,
+                            Latitude = data.Latitude,
+                            Longitude = data.Latitude,
+                            DateTime = data.DateTime,
+                            Species = "Monarch"
+                        }
+                    );
+                }
+                else // if the city state already exists
+                {
+                    var reporter = reporters.Where(e => e.PostalCode.Equals(postalCode)).First();
+                    humanSightings.Add
+                    (
+                        new HumanSighting
+                        {
+                            UserName = reporter.UserName,
+                            City = city,
+                            StateProvince = state,
+                            Country = country,
+                            Latitude = data.Latitude,
+                            Longitude = data.Latitude,
+                            DateTime = data.DateTime,
+                            Species = "Monarch"
+                        }
+                    );
+                }
+
             }
+
+            foreach (var sighting in humanSightings)
+                Console.WriteLine(sighting);
+
+            foreach (var reporter in reporters)
+                Console.WriteLine(reporter);
+            
         }
     }
 }
