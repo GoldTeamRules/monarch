@@ -173,7 +173,10 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MonitorsController.cs" />
+    <Compile Include="Controllers\OrganizationsController.cs" />
     <Compile Include="Controllers\ReportersController.cs" />
+    <Compile Include="Controllers\SightingFileUploadsController.cs" />
+    <Compile Include="Controllers\UserFileUploadsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -267,6 +270,21 @@
     <Content Include="Views\Monitors\Details.cshtml" />
     <Content Include="Views\Monitors\Edit.cshtml" />
     <Content Include="Views\Monitors\Index.cshtml" />
+    <Content Include="Views\Organizations\Create.cshtml" />
+    <Content Include="Views\Organizations\Delete.cshtml" />
+    <Content Include="Views\Organizations\Details.cshtml" />
+    <Content Include="Views\Organizations\Edit.cshtml" />
+    <Content Include="Views\Organizations\Index.cshtml" />
+    <Content Include="Views\SightingFileUploads\Create.cshtml" />
+    <Content Include="Views\SightingFileUploads\Delete.cshtml" />
+    <Content Include="Views\SightingFileUploads\Details.cshtml" />
+    <Content Include="Views\SightingFileUploads\Edit.cshtml" />
+    <Content Include="Views\SightingFileUploads\Index.cshtml" />
+    <Content Include="Views\UserFileUploads\Create.cshtml" />
+    <Content Include="Views\UserFileUploads\Delete.cshtml" />
+    <Content Include="Views\UserFileUploads\Details.cshtml" />
+    <Content Include="Views\UserFileUploads\Edit.cshtml" />
+    <Content Include="Views\UserFileUploads\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
