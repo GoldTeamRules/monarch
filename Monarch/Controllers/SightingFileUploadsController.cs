@@ -172,9 +172,10 @@ namespace Monarch.Controllers
                             }
                             else if (record.Event == "S")
                             {
-                                if (record.Tag.IsNull)
+                                // if the tag is not null, it's a sighting by a monitor
+                                if (!record.Tag.IsNull)
                                 {
-
+                                    var 
                                 }
                             }
                         }
