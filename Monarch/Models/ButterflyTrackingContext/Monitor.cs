@@ -12,7 +12,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         // PK and FKs
         public int MonitorId { get; set; }
         public int? UserFileUploadId { get; set; }
-        public int OrganizationId { get; set; }
+        public int? OrganizationId { get; set; }
 
         // required fields
         [Required]
@@ -30,7 +30,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         public string PostalCode { get; set; }
         
         // linked entities
-        public virtual Organization Organization { get; set; }
-        public virtual UserFileUpload UserFileUpload { get; set; }
+        public Organization Organization { get; set; }
+        public UserFileUpload UserFileUpload { get; set; }
     }
 }

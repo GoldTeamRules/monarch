@@ -39,7 +39,7 @@ namespace Monarch.Controllers
         // GET: Monitors/Create
         public ActionResult Create()
         {
-            ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "OwnerId");
+            ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName");
             ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId");
             return View();
         }
