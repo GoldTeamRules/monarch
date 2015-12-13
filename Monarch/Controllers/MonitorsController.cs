@@ -75,7 +75,7 @@ namespace Monarch.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "OwnerId", monitor.OrganizationId);
+            ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", monitor.OrganizationId);
             ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId", monitor.UserFileUploadId);
             return View(monitor);
         }

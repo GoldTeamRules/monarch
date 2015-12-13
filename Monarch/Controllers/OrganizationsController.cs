@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
+using System.Web.Security;
+using Microsoft.AspNet.Identity;
 
 namespace Monarch.Controllers
 {
@@ -46,10 +48,11 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "OrganizationId,OwnerId,UniqueName,DisplayName,Description,WebsiteUrl,LogoUrl")] Organization organization)
+        public ActionResult Create([Bind(Include = "OrganizationId,UniqueName,DisplayName,Description,WebsiteUrl,LogoUrl")] Organization organization)
         {
             if (ModelState.IsValid)
             {
+                organization.OwnerId = Guid.Parse(User.Identity.GetUserId());
                 db.Organizations.Add(organization);
                 db.SaveChanges();
                 return RedirectToAction("Index");

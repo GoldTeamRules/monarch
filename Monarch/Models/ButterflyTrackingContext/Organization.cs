@@ -11,7 +11,7 @@ namespace Monarch.Models.ButterflyTrackingContext
     {
         public int OrganizationId { get; set; }
         [Required]
-        public string OwnerId { get; set; }
+        public Guid OwnerId { get; set; }
         [Required]
         public string UniqueName { get; set; }
         public string DisplayName { get; set; }
