@@ -21,9 +21,7 @@ namespace Monarch.Controllers
         {
             return View(db.SightingFileUploads.ToList());
         }
-        // MERGE CONFLIC MAYBJFKLD:S
-        //fjdeiopvjciru9320uf894032hj8
-        //fdsfjkdls;jfkdl;s
+        
         // GET: SightingFileUploads/Details/5
         public ActionResult Details(int? id)
         {
