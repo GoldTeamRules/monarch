@@ -155,11 +155,29 @@ namespace Monarch.Controllers
                     using (var reader = new StreamReader(upload.InputStream))
                     {
                         string errorMessage;
-                        sightingsFile.TryRead(reader, out errorMessage);
 
-                        int count = sightingsFile.Count;
-                        string firstRecord = sightingsFile[0].ToString();
-                        int breakhere = 0;
+                        if (!sightingsFile.TryRead(reader, out errorMessage))
+                        {
+                            // logic if the file couldn't get parsed
+                        }
+
+                        var stringBuilder = new StringBuilder();
+                        foreach (dynamic record in sightingsFile)
+                        {
+                            if (record.DateTime > sightingsFile.Header.DateTime)
+                            {
+                                stringBuilder.AppendLine("Could not add record {0} because"
+                                    + "the record date is greater than the date in the header");
+                                continue; // go on to the next record
+                            }
+                            else if (record.Event == "S")
+                            {
+                                if (record.Tag.IsNull)
+                                {
+
+                                }
+                            }
+                        }
                     }
 
                 }
