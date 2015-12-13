@@ -19,7 +19,7 @@ namespace Monarch.Controllers
         {
             return View(db.SightingFileUploads.ToList());
         }
-
+        //comment
         // GET: SightingFileUploads/Details/5
         public ActionResult Details(int? id)
         {
