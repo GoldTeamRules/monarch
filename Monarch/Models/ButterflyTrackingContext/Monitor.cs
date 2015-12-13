@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         // PK and FKs
         public int MonitorId { get; set; }
         public int? UserFileUploadId { get; set; }
+       // [DisplayName("OrganizationId")]
         public int? OrganizationId { get; set; }
 
         // required fields
@@ -30,7 +32,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         public string PostalCode { get; set; }
         
         // linked entities
-        public Organization Organization { get; set; }
-        public UserFileUpload UserFileUpload { get; set; }
+        public virtual Organization Organization { get; set; }
+        public virtual UserFileUpload UserFileUpload { get; set; }
     }
 }

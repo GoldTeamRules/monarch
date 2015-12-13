@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
+using System.Web.UI.WebControls;
 
 namespace Monarch.Controllers
 {
@@ -39,7 +40,10 @@ namespace Monarch.Controllers
         // GET: Monitors/Create
         public ActionResult Create()
         {
+           /* var organizationList = new DropDownList(db.Organizations, "OrganizationId", "UniqueName");
+            organizationList.Items.Insert(0, new SelectListItem(string.Empty, string.Empty));*/
             ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName");
+        
             ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId");
             return View();
         }
@@ -58,6 +62,7 @@ namespace Monarch.Controllers
                 return RedirectToAction("Index");
             }
 
+            //ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", monitor.OrganizationId);
             ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", monitor.OrganizationId);
             ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId", monitor.UserFileUploadId);
             return View(monitor);
