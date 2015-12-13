@@ -62,7 +62,7 @@ namespace Monarch.Models.ButterflyTrackingContext
             }
             else if (matchingUsers.Count() <= 0)
             {
-                throw new ArgumentException(string.Format("ERROR: the reporterId: {0} returned Reporters", reporterId));
+                return null;
             }
             return matchingUsers.First().UserId;
         }
