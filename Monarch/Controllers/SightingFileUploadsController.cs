@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
+using System.IO;
+using System.Text;
 
 namespace Monarch.Controllers
 {
@@ -50,11 +52,29 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "SightingFileUploadId,UserId,DateTime")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
         {
+            Console.WriteLine("This is a test");
+            var sb = new StringBuilder();
             if (ModelState.IsValid)
             {
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    
+                    using (var reader = new StreamReader(upload.InputStream))
+                    {
+                        
+                        string line = "";
+                        
+                        while((line = reader.ReadLine()) != null)
+                        {
+                            sb.AppendLine(line);
+                            Console.WriteLine(line);
+                        }
+                    }
+                }
                 db.SightingFileUploads.Add(sightingFileUpload);
                 db.SaveChanges();
                 return RedirectToAction("Index");
+                //return sb.ToString();
             }
 
             return View(sightingFileUpload);
