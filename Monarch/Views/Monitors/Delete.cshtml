@@ -19,14 +19,20 @@
             @Html.DisplayFor(model => model.Organization.OwnerId)
         </dd>
 
-        <dt>
+        <dt>-
             @Html.DisplayNameFor(model => model.UserFileUpload.UserFileUploadId)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.UserFileUpload.UserFileUploadId)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Organization.OrganizationId)
+        </dt>
 
+        <dd>
+            @Html.DisplayFor(model => model.Organization.UniqueName)
+        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.UniqueName)
         </dt>

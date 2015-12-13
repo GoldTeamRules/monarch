@@ -21,6 +21,9 @@
             @Html.DisplayNameFor(model => model.UniqueName)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.Organization.OrganizationId)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Latitude)
         </th>
         <th>
@@ -54,6 +57,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.UniqueName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Organization.UniqueName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Latitude)
