@@ -50,7 +50,6 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "SightingFileUploadId,UserId,DateTime")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
         {
-            Console.WriteLine("This is a test");
             var sb = new StringBuilder();
             if (ModelState.IsValid)
             {
@@ -65,14 +64,13 @@ namespace Monarch.Controllers
                         while((line = reader.ReadLine()) != null)
                         {
                             sb.AppendLine(line);
-                            Console.WriteLine(line);
                         }
                     }
                 }
                 db.SightingFileUploads.Add(sightingFileUpload);
                 db.SaveChanges();
+                var fileContents = sb.ToString();
                 return RedirectToAction("Index");
-                //return sb.ToString();
             }
 
             return View(sightingFileUpload);
