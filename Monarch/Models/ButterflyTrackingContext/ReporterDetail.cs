@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -7,9 +8,14 @@ namespace Monarch.Models.ButterflyTrackingContext
 {
     public class ReporterDetail
     {
+        // pk
         public int ReporterDetailId { get; set; }
+        [Required]
         public int ReporterId { get; set; }
+        [Required]
         public int OrganizationId { get; set; }
+
+        public virtual Reporter Reporter { get; set; }
         public virtual Organization Organization { get; set; }
 
         public override bool Equals(object obj)
