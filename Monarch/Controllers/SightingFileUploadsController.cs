@@ -19,7 +19,7 @@ namespace Monarch.Controllers
         {
             return View(db.SightingFileUploads.ToList());
         }
-
+        
         // GET: SightingFileUploads/Details/5
         public ActionResult Details(int? id)
         {
@@ -46,7 +46,7 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "SightingFileUploadId,UserId,DateTime")] SightingFileUpload sightingFileUpload)
+        public ActionResult Create([Bind(Include = "SightingFileUploadId,UserId,DateTime")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
