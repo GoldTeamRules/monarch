@@ -52,7 +52,7 @@ namespace Monarch.Controllers
         {
             if (ModelState.IsValid)
             {
-                organization.OwnerId = Guid.Parse(User.Identity.GetUserId());
+                organization.OwnerId = Reporter.GetReporterIdForCurrentUser();
                 db.Organizations.Add(organization);
                 db.SaveChanges();
                 return RedirectToAction("Index");

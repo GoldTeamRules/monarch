@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
 using System.IO;
 using System.Text;
+using SimpleFixedWidthParser;
 
 namespace Monarch.Controllers
 {
@@ -55,17 +56,112 @@ namespace Monarch.Controllers
             {
                 if (upload != null && upload.ContentLength > 0)
                 {
-                    
+                    DateTime dummyDate;
+                    double dummyDouble;
+                    int dummyInt;
+                    var sightingsFile = new FixedWidthParser
+                    (
+                        filePath: "sightings.txt",
+                        columnDefintions: new List<dynamic> // note this list is defined by the dynamic keyword
+                        {
+                            new FixedWidthColumn<string>
+                            (
+                                key: "Event",
+                                length: 2,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest =>
+                                       stringToTest.Trim().ToUpper().Equals("S")
+                                    || stringToTest.Trim().ToUpper().Equals("T")
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "UserName",
+                                length: 30,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => stringToTest.Contains("@")
+                            ),
+                            new FixedWidthColumn<DateTime>
+                            (
+                                key: "DateTime",
+                                length: 19,
+                                conversionFromStringToDataType: dataString => DateTime.Parse(dataString),
+                                conversionFromDataToString: data => data.ToString(@"yyyy-MM-dd H:mm:ss "),
+                                conformanceTest: stringToTest => DateTime.TryParse(stringToTest, out dummyDate),
+                                nullable: false
+                            ),
+                            new FixedWidthColumn<double>
+                            (
+                                key: "Latitude",
+                                length: 11,
+                                conversionFromStringToDataType: dataString => double.Parse(dataString),
+                                conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                                conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble),
+                                nullable: false
+                            ),
+                            new FixedWidthColumn<double>
+                            (
+                                key: "Longitude",
+                                length: 11,
+                                conversionFromStringToDataType: dataString => double.Parse(dataString),
+                                conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                                conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble),
+                                nullable: false
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "City",
+                                length: 35,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => " " + data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "State",
+                                length: 30,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "Country",
+                                length: 30,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "Species",
+                                length: 20,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<int>
+                            (
+                                key: "Tag",
+                                length: 11,
+                                conversionFromStringToDataType: dataString => int.Parse(dataString),
+                                conversionFromDataToString: data => data.ToString(),
+                                conformanceTest: stringToTest => int.TryParse(stringToTest, out dummyInt)
+                            )
+                        }
+                    );
+
                     using (var reader = new StreamReader(upload.InputStream))
                     {
-                        
-                        string line = "";
-                        
-                        while((line = reader.ReadLine()) != null)
-                        {
-                            sb.AppendLine(line);
-                        }
+                        string errorMessage;
+                        sightingsFile.TryRead(reader, out errorMessage);
+
+                        int count = sightingsFile.Count;
+                        string firstRecord = sightingsFile[0].ToString();
+                        int breakhere = 0;
                     }
+
                 }
                 db.SightingFileUploads.Add(sightingFileUpload);
                 db.SaveChanges();

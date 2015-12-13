@@ -83,5 +83,10 @@ namespace Monarch.Models.ButterflyTrackingContext
             }
             return matchingUsers.First().ReporterId;
         }
+
+        public static int GetReporterIdForCurrentUser()
+        {
+            return -1;
+        }
     }
 }
