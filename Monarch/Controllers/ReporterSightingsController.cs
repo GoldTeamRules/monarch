@@ -17,8 +17,8 @@ namespace Monarch.Controllers
         // GET: ReporterSightings
         public ActionResult Index()
         {
-            var humanSightings = db.HumanSightings.Include(r => r.Reporter).Include(r => r.SightingFileUpload);
-            return View(humanSightings.ToList());
+            var reporterSightings = db.ReporterSightings.Include(r => r.Reporter).Include(r => r.SightingFileUpload);
+            return View(reporterSightings.ToList());
         }
 
         // GET: ReporterSightings/Details/5
@@ -28,7 +28,7 @@ namespace Monarch.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ReporterSighting reporterSighting = db.HumanSightings.Find(id);
+            ReporterSighting reporterSighting = db.ReporterSightings.Find(id);
             if (reporterSighting == null)
             {
                 return HttpNotFound();
@@ -53,7 +53,7 @@ namespace Monarch.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.HumanSightings.Add(reporterSighting);
+                db.ReporterSightings.Add(reporterSighting);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -70,7 +70,7 @@ namespace Monarch.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ReporterSighting reporterSighting = db.HumanSightings.Find(id);
+            ReporterSighting reporterSighting = db.ReporterSightings.Find(id);
             if (reporterSighting == null)
             {
                 return HttpNotFound();
@@ -105,7 +105,7 @@ namespace Monarch.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ReporterSighting reporterSighting = db.HumanSightings.Find(id);
+            ReporterSighting reporterSighting = db.ReporterSightings.Find(id);
             if (reporterSighting == null)
             {
                 return HttpNotFound();
@@ -118,8 +118,8 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            ReporterSighting reporterSighting = db.HumanSightings.Find(id);
-            db.HumanSightings.Remove(reporterSighting);
+            ReporterSighting reporterSighting = db.ReporterSightings.Find(id);
+            db.ReporterSightings.Remove(reporterSighting);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

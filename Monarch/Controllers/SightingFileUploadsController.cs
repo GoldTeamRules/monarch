@@ -76,7 +76,7 @@ namespace Monarch.Controllers
                             ),
                             new FixedWidthColumn<string>
                             (
-                                key: "UserName",
+                                key: "UserNameOrReporterId",
                                 length: 30,
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => data,
@@ -162,22 +162,47 @@ namespace Monarch.Controllers
                         }
 
                         var stringBuilder = new StringBuilder();
+                        int index = 0;
                         foreach (dynamic record in sightingsFile)
                         {
-                            if (record.DateTime > sightingsFile.Header.DateTime)
+                            try
                             {
-                                stringBuilder.AppendLine("Could not add record {0} because"
-                                    + "the record date is greater than the date in the header");
-                                continue; // go on to the next record
-                            }
-                            else if (record.Event == "S")
-                            {
-                                // if the tag is not null, it's a sighting by a monitor
-                                if (!record.Tag.IsNull)
+                                if (record.DateTime > sightingsFile.Header.DateTime)
                                 {
-                                    var 
+                                    stringBuilder.AppendLine(string.Format(
+                                        "Could not add record: [{0}] because the record date is greater than the date in the header",
+                                        index));
+                                    continue; // go on to the next record
                                 }
+                                else if (record.Event == "S")
+                                {
+                                    if (record.Tag.IsNull) // if the tag IS null, then it's a human
+                                    {
+                                        string message;
+                                        // tries to find the reporter from the user name, if it can't it'll throw an error
+                                        Reporter reporter = findReporterFromIdOrUserName(
+                                            record.UserNameOrReporterId.ToString(), out message);
+                                        if (reporter == null)
+                                        {
+                                            stringBuilder.AppendLine("Could not add record: [{0}] " + message);
+                                            continue; // go on to the next record
+                                        }
+                                        // master location then create new human sighting
+                                        //db.ReporterSightings.Add(new ReporterSighting { Reporter=reporter, DateTime=record.DateTime });
+                                    }
+                                    else // if it is NOT null, then it's monitor sighting
+                                    {
+
+                                    }
+                                }
+                                
                             }
+                            catch (Exception e)
+                            {
+                                stringBuilder.AppendLine(string.Format("Could not add record: [{0}]: {1}", index, e.Message));
+                                continue;
+                            }
+                            index++;
                         }
                     }
 
@@ -189,6 +214,51 @@ namespace Monarch.Controllers
             }
 
             return View(sightingFileUpload);
+        }
+
+        private Reporter findReporterFromIdOrUserName(string userNameOrReporterId, out string message)
+        {
+            int reporterId;
+            Reporter reporter;
+
+            if (int.TryParse(userNameOrReporterId, out reporterId))
+            {
+                reporter = db.Reporters.Find(reporterId);
+                if (reporter == null) // if we didn't find a reporter
+                {
+                    message = string.Format("No reporter was found with Id: \'{1}\'", reporterId);
+                    return null;
+                }
+            }
+            else // cannot parse as int; now try to match user name
+            {
+                var reporters = from r in db.Reporters
+                                where r.UserName.ToLower().Equals(userNameOrReporterId.ToLower())
+                                select r;
+                if (reporters.Count() <= 0) // case where no reporters are returned
+                {
+                    message = string.Format("No reporter was found with UserName: \'{1}\'", userNameOrReporterId);
+                    return null;
+                }
+                else if (reporters.Count() > 1) // case where there's more than one 
+                {
+                    message = string.Format("ERROR: two reporters exist with UserName: \'{1}\'"
+                        + "Contact your database administrator", userNameOrReporterId);
+                    return null;
+                }
+                else
+                {
+                    reporter = reporters.First();
+                    if (reporter == null)
+                    {
+                        message = string.Format("Reporter with UserName: \'{1}\' returned a null value.",
+                          userNameOrReporterId);
+                        return null;
+                    }
+                }
+            }
+            message = "";
+            return reporter;
         }
 
         // GET: SightingFileUploads/Edit/5
