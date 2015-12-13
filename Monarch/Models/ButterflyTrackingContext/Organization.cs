@@ -10,8 +10,11 @@ namespace Monarch.Models.ButterflyTrackingContext
     public class Organization
     {
         public int OrganizationId { get; set; }
+        /// <summary>
+        /// The reporter that created and owns the Organization
+        /// </summary>
         [Required]
-        public string OwnerId { get; set; }
+        public int OwnerId { get; set; }
         [Required]
         public string UniqueName { get; set; }
         public string DisplayName { get; set; }

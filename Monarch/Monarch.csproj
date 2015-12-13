@@ -49,8 +49,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="SimpleFixedWidthParser, Version=0.9.5824.34976, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleFixedWidthParser.0.9.5824.34976\lib\net452\SimpleFixedWidthParser.exe</HintPath>
+    <Reference Include="SimpleFixedWidthParser, Version=0.9.5825.1068, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleFixedWidthParser.0.9.5825.1068\lib\net452\SimpleFixedWidthParser.exe</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

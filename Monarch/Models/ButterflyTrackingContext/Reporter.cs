@@ -49,5 +49,44 @@ namespace Monarch.Models.ButterflyTrackingContext
         {
             return ReporterId;
         }
+
+        public static Guid? GetUserId(int reporterId)
+        {
+            var db = new ButterflyTrackingContext();
+            var matchingUsers = from user in db.Reporters
+                         where user.ReporterId.Equals(reporterId)
+                         select user;
+            if (matchingUsers.Count() > 1)
+            {
+                throw new ApplicationException("ERROR: there were multiple matches for the given reporterId");
+            }
+            else if (matchingUsers.Count() <= 0)
+            {
+                return null;
+            }
+            return matchingUsers.First().UserId;
+        }
+
+        public static int? GetReporterId(Guid userId)
+        {
+            var db = new ButterflyTrackingContext();
+            var matchingUsers = from user in db.Reporters
+                                where user.UserId.Equals(userId)
+                                select user;
+            if (matchingUsers.Count() > 1)
+            {
+                throw new ApplicationException("ERROR: there were multiple matches for the given UserId");
+            }
+            else if (matchingUsers.Count() <= 0)
+            {
+                return null;
+            }
+            return matchingUsers.First().ReporterId;
+        }
+
+        public static int GetReporterIdForCurrentUser()
+        {
+            return -1;
+        }
     }
 }
