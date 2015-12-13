@@ -49,8 +49,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="SimpleFixedWidthParser, Version=0.9.5823.26939, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleFixedWidthParser.0.9.5823.26939\lib\net452\SimpleFixedWidthParser.exe</HintPath>
+    <Reference Include="SimpleFixedWidthParser, Version=0.9.5824.34976, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleFixedWidthParser.0.9.5824.34976\lib\net452\SimpleFixedWidthParser.exe</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -190,6 +190,7 @@
     <Compile Include="Models\ButterflyTrackingContext\Butterfly.cs" />
     <Compile Include="Models\ButterflyTrackingContext\ButterflyTrackingContext.cs" />
     <Compile Include="Models\ButterflyTrackingContext\ButterflyTrackingInitializer.cs" />
+    <Compile Include="Models\ButterflyTrackingContext\File.cs" />
     <Compile Include="Models\ButterflyTrackingContext\ReporterSighting.cs" />
     <Compile Include="Models\ButterflyTrackingContext\Monitor.cs" />
     <Compile Include="Models\ButterflyTrackingContext\MonitorSighting.cs" />
