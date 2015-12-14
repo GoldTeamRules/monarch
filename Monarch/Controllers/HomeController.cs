@@ -15,7 +15,7 @@ namespace Monarch.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "Gold Team Rules!";
 
             return View();
         }
