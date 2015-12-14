@@ -11,6 +11,7 @@ using System.IO;
 using System.Text;
 using SimpleFixedWidthParser;
 using Monarch.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Monarch.Controllers
 {
@@ -50,14 +51,19 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "SightingFileUploadId,ReporterId,DateTime")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
+        public ActionResult Create([Bind(Include = "SightingFileUploadId")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
         {
             var stringBuilder = new StringBuilder();
             if (ModelState.IsValid)
             {
                 if (upload != null && upload.ContentLength > 0)
                 {
-                    //sightingFileUpload.
+                    // get the reporter entity linked the user for uploading the file
+                    var reporterAttachedToUser = db.GetReporterIdFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                    sightingFileUpload.Reporter = reporterAttachedToUser;
+                    sightingFileUpload.ReporterId = reporterAttachedToUser.ReporterId;
+                    // set the date of the sighting file upload to TODAY
+                    sightingFileUpload.DateTime = DateTime.Today;
                     db.SightingFileUploads.Add(sightingFileUpload);
                     db.SaveChanges();
                     DateTime dummyDate;
