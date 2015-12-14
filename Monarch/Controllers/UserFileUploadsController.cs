@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
+using Microsoft.AspNet.Identity;
 
 namespace Monarch.Controllers
 {
@@ -46,10 +47,21 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UserFileUploadId,UserId,DateTime")] UserFileUpload userFileUpload)
+        public ActionResult Create([Bind(Include = "UserFileUploadId,ReporterId,DateTime")] UserFileUpload userFileUpload, HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    // get the reporter entity linked the user for uploading the file
+                    var reporterAttachedToUser = db.GetReporterIdFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                    userFileUpload.Reporter = reporterAttachedToUser;
+                    userFileUpload.ReporterId = reporterAttachedToUser.ReporterId;
+                    // set the date of the sighting file upload to TODAY
+                    userFileUpload.DateTime = DateTime.Today;
+                    db.UserFileUploads.Add(userFileUpload);
+                    db.SaveChanges();
+                }
                 db.UserFileUploads.Add(userFileUpload);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -78,7 +90,7 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserFileUploadId,UserId,DateTime")] UserFileUpload userFileUpload)
+        public ActionResult Edit([Bind(Include = "UserFileUploadId,ReporterId,DateTime")] UserFileUpload userFileUpload)
         {
             if (ModelState.IsValid)
             {

@@ -45,7 +45,7 @@ namespace Monarch.Models.ButterflyTrackingContext
             if (reporterQueryByUserId.Count() > 1)
             {
                 throw new InvalidOperationException("The query to get the reporter Id  from a " 
-                    + "UserId Guid returned more than one reporter. Contact your database admin!");
+                    + "ReporterId Guid returned more than one reporter. Contact your database admin!");
             }
 
             // happy path

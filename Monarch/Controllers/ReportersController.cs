@@ -48,7 +48,7 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ReporterId,Name,UserName,UserFileUploadId,UserId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone")] Reporter reporter)
+        public ActionResult Create([Bind(Include = "ReporterId,Name,UserName,UserFileUploadId,ReporterId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone")] Reporter reporter)
         {
             if (ModelState.IsValid)
             {
@@ -82,7 +82,7 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ReporterId,Name,UserName,UserFileUploadId,UserId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone")] Reporter reporter)
+        public ActionResult Edit([Bind(Include = "ReporterId,Name,UserName,UserFileUploadId,ReporterId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone")] Reporter reporter)
         {
             if (ModelState.IsValid)
             {

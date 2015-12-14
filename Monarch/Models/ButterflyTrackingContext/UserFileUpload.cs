@@ -10,9 +10,12 @@ namespace Monarch.Models.ButterflyTrackingContext
     {
         public int UserFileUploadId { get; set; }
         [Required]
-        public Guid UserId { get; set; }
+        public int ReporterId { get; set; }
         [Required]
         public DateTime DateTime { get; set; }
+
+        // reporter entity that uploaded that users.txt batch file
+        public virtual Reporter Reporter { get; set; }
 
         public override bool Equals(object obj)
         {
