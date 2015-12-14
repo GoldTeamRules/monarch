@@ -28,7 +28,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         {
             base.OnModelCreating(modelBuilder);
             //modelBuilder.Entity<SightingFileUpload>().HasRequired(i => i.Reporter).WithOptional().WillCascadeOnDelete(false);
-            //modelBuilder.Entity<ReporterSighting>().HasOptional(i => i.SightingFileUpload)..WillCascadeOnDelete(false);
+            modelBuilder.Entity<Reporter>().HasOptional(i => i.UserFileUpload).WithOptionalPrincipal();
         }
 
         public Reporter GetReporterIdFromUserId(string userId, string userName)

@@ -8,6 +8,10 @@ using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
 using Microsoft.AspNet.Identity;
+using SimpleFixedWidthParser;
+using System.Text.RegularExpressions;
+using Monarch.Models;
+using System.IO;
 
 namespace Monarch.Controllers
 {
@@ -49,6 +53,7 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "UserFileUploadId,ReporterId,DateTime")] UserFileUpload userFileUpload, HttpPostedFileBase upload)
         {
+            var log = new List<string>();
             if (ModelState.IsValid)
             {
                 if (upload != null && upload.ContentLength > 0)
@@ -61,14 +66,144 @@ namespace Monarch.Controllers
                     userFileUpload.DateTime = DateTime.Today;
                     db.UserFileUploads.Add(userFileUpload);
                     db.SaveChanges();
+
+                    Regex digitsOnly = new Regex(@"[^\d]"); // this to remove non-numerical characters for phone numbers
+
+
+                    var usersFile = new FixedWidthParser
+                    (
+                        filePath: "users.txt",
+                        columnDefintions: new List<dynamic> // note this list is defined by the dynamic keyword
+                        {
+                            new FixedWidthColumn<string>
+                            (
+                                key: "Type",
+                                length: 2,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest =>
+                                       stringToTest.ToUpper() == "R"
+                                    || stringToTest.ToUpper() == "T"
+                                    || stringToTest.ToUpper() == "M"
+                                    || stringToTest.ToUpper() == "A"
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "Name",
+                                length: 36,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "StreetAddress",
+                                length: 34,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "City",
+                                length: 35,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "State",
+                                length: 30,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "PostalCode",
+                                length: 13,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "UserName",
+                                length: 30,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => stringToTest.Contains("@"),
+                                nullable: false
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "HomePhone",
+                                length: 12,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                                // TODO: maybe add better conformance testing for phone numbers
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "CellPhone",
+                                length: 12,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "Organization",
+                                length: 20,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                        }
+                    );
+
+                    using (var reader = new StreamReader(upload.InputStream))
+                    {
+                        string errorMessage;
+
+                        if (!usersFile.TryRead(reader, out errorMessage))
+                        {
+                            log.Add("Could not parse users file. Check the file and try again.\n" + errorMessage);
+                            throw new NotImplementedException("Couldn't read the batch file. TODO: add some way to handle this");
+                        }
+
+                        var locationMaster = new LocationMaster();
+
+                        int index = 0;
+                        foreach(dynamic record in usersFile)
+                        {
+                            try
+                            {
+                                // USERS BATCH FILE TRANSFORMATION LOGIC
+                                if (record.Type == "M") // if the record user type is 'M' for machine monitor
+                                {
+
+                                }
+
+                            }
+                            catch (Exception e) // might as well catch everything just in case
+                            {
+                                log.Add(string.Format("Could not add record: [{0}]: {1}", index, e.Message));
+                                continue;
+                            }
+                        }
+                    }
                 }
-                db.UserFileUploads.Add(userFileUpload);
-                db.SaveChanges();
+                
                 return RedirectToAction("Index");
             }
 
             return View(userFileUpload);
         }
+
+        //private Monitor find
 
         // GET: UserFileUploads/Edit/5
         public ActionResult Edit(int? id)
