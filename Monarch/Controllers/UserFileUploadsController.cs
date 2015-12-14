@@ -184,7 +184,29 @@ namespace Monarch.Controllers
                                 // USERS BATCH FILE TRANSFORMATION LOGIC
                                 if (record.Type == "M") // if the record user type is 'M' for machine monitor
                                 {
+                                    var monitor = findMonitorFromUniqueName(record.UserName);
+                                    if (monitor != null) // if there is already an existing monitor
+                                    {
+                                        log.Add(string.Format(
+                                            "Could not add record: [{0}] because monitor with UnquieName \'{1}\' aleady exists in the database",
+                                            index,
+                                            record.UserName));
+                                        continue;
+                                    }
+                                    // identify organization name (if any)
+                                    if (record.Organization != null)
+                                    {
+                                        var organization = findOrganizationFromUniqueName(record.Organization);
 
+                                        if (organization == null)
+                                        {
+                                            log.Add(string.Format(
+                                                "Could not add record: [{0}] because the record lists and Organization UniqueName: \'{1}\' that does exist.",
+                                                record.Organization));
+                                            continue;
+                                        }
+                                        
+                                    }
                                 }
 
                             }
@@ -203,7 +225,56 @@ namespace Monarch.Controllers
             return View(userFileUpload);
         }
 
-        //private Monitor find
+        private Organization findOrganizationFromUniqueName(string uniqueName)
+        {
+            var organizations = from o in db.Organizations
+                                where o.UniqueName.ToLower() == uniqueName.ToLower()
+                                select o;
+
+            if (organizations.Count() <= 0)
+            {
+                return null;
+            }
+
+            if (organizations.Count() == 1)
+            {
+                return organizations.First();
+            }
+
+            if (organizations.Count() > 1)
+            {
+                throw new InvalidOperationException(string.Format(
+                    "More than one organization with unique name \'{0}\' exists. Please contact your database admin",
+                    uniqueName));
+            }
+
+            return null;
+        }
+
+        private Monitor findMonitorFromUniqueName(string uniqueName)
+        {
+            var monitors = from m in db.Monitors
+                           where m.UniqueName.ToLower() == uniqueName.ToLower()
+                           select m;
+
+            if (monitors.Count() <= 0) // case where no monitors are found
+            {
+                return null; // HAPPY PATH
+            }
+
+            if (monitors.Count() == 1) // case where the monitor already exists
+            {
+                return monitors.First();
+            }
+
+            if (monitors.Count() > 1)
+            {
+                throw new InvalidOperationException(string.Format(
+                    "More than one monitor with unique name \'{0}\' exists. Please contact your database admin",
+                    uniqueName));
+            }
+            return null;
+        }
 
         // GET: UserFileUploads/Edit/5
         public ActionResult Edit(int? id)
