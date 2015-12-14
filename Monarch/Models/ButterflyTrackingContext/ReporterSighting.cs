@@ -12,7 +12,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         public int ReporterSightingId { get; set; }
         [Required]
         public int ReporterId { get; set; }
-        public int SightingFileUploadId { get; set; }
+        public int? SightingFileUploadId { get; set; }
 
         [Required]
         public double Latitude { get; set; }

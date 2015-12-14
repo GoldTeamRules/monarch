@@ -54,7 +54,10 @@ namespace Monarch.Controllers
         {
             if (ModelState.IsValid)
             {
-                reporterSighting.ReporterId = db.GetReporterIdFromUserId(new Guid(User.Identity.GetUserId()), User.Identity.Name);
+                
+                var testvar = db.GetReporterIdFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                reporterSighting.Reporter = testvar;
+                reporterSighting.ReporterId = testvar.ReporterId;
                 db.ReporterSightings.Add(reporterSighting);
                 db.SaveChanges();
                 return RedirectToAction("Index");

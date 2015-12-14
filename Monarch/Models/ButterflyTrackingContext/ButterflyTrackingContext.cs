@@ -21,25 +21,26 @@ namespace Monarch.Models.ButterflyTrackingContext
         public DbSet<MonitorSighting> MonitorSightings { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Reporter> Reporters { get; set; }
-        public DbSet<ReporterDetail> ReporterDetails { get; set; }
+        //public DbSet<ReporterDetail> ReporterDetails { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<SightingFileUpload>().HasRequired(i => i.Reporter).WithOptional().WillCascadeOnDelete(false);
+            //modelBuilder.Entity<SightingFileUpload>().HasRequired(i => i.Reporter).WithOptional().WillCascadeOnDelete(false);
+            //modelBuilder.Entity<ReporterSighting>().HasOptional(i => i.SightingFileUpload)..WillCascadeOnDelete(false);
         }
 
-        public int GetReporterIdFromUserId(string userId, string userName)
+        public Reporter GetReporterIdFromUserId(string userId, string userName)
         {
             return GetReporterIdFromUserId(new Guid(userId), userName);
         }
 
-        public int GetReporterIdFromUserId(Guid userId, string userName)
+        public Reporter GetReporterIdFromUserId(Guid userId, string userName)
         {
             var reporterQueryByUserId = from r in Reporters
                            where r.UserId == userId
-                           select r.ReporterId;
+                           select r;
 
             if (reporterQueryByUserId.Count() > 1)
             {
@@ -92,7 +93,7 @@ namespace Monarch.Models.ButterflyTrackingContext
                     SaveChanges();
                 }
             }
-            return -1;
+            return null;
         }
     }
 }
