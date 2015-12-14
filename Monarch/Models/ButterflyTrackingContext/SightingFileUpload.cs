@@ -12,13 +12,13 @@ namespace Monarch.Models.ButterflyTrackingContext
         public int SightingFileUploadId { get; set; }
         // FK for reporter ID
         [Required]
-        public Guid UserId { get; set; }
+        public int ReporterId { get; set; }
         // the date and time the file was uploaded
         [Required]
         public DateTime DateTime { get; set; }
 
         // the reporter who uploaded the file
-        //public virtual Reporter Reporter { get; set; }
+        public virtual Reporter Reporter { get; set; }
 
         public override bool Equals(object obj)
         {

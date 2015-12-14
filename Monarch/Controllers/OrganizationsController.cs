@@ -52,7 +52,8 @@ namespace Monarch.Controllers
         {
             if (ModelState.IsValid)
             {
-                organization.OwnerId = Reporter.GetReporterIdForCurrentUser();
+                string test = User.Identity.GetUserId();
+                //organization.OwnerId = Reporter.GetReporterIdForCurrentUser();
                 db.Organizations.Add(organization);
                 db.SaveChanges();
                 return RedirectToAction("Index");

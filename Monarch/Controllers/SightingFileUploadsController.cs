@@ -50,13 +50,14 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "SightingFileUploadId,UserId,DateTime")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
+        public ActionResult Create([Bind(Include = "SightingFileUploadId,ReporterId,DateTime")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
         {
             var stringBuilder = new StringBuilder();
             if (ModelState.IsValid)
             {
                 if (upload != null && upload.ContentLength > 0)
                 {
+                    //sightingFileUpload.
                     db.SightingFileUploads.Add(sightingFileUpload);
                     db.SaveChanges();
                     DateTime dummyDate;
@@ -454,7 +455,7 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SightingFileUploadId,UserId,DateTime")] SightingFileUpload sightingFileUpload)
+        public ActionResult Edit([Bind(Include = "SightingFileUploadId,ReporterId,DateTime")] SightingFileUpload sightingFileUpload)
         {
             if (ModelState.IsValid)
             {
