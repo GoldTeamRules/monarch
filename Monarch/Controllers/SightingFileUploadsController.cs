@@ -43,6 +43,8 @@ namespace Monarch.Controllers
         // GET: SightingFileUploads/Create
         public ActionResult Create()
         {
+            if (ViewBag.Log == null)
+                ViewBag.Log = new List<string>();
             return View();
         }
 
@@ -53,6 +55,9 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "SightingFileUploadId")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
         {
+            if (ViewBag.Log == null)
+                ViewBag.Log = new List<string>();
+
             var log = new List<string>();
             if (ModelState.IsValid)
             {
@@ -66,7 +71,6 @@ namespace Monarch.Controllers
                     sightingFileUpload.DateTime = DateTime.Today;
                     db.SightingFileUploads.Add(sightingFileUpload);
                     db.SaveChanges();
-
 
 
                     DateTime dummyDate;
@@ -177,9 +181,10 @@ namespace Monarch.Controllers
 
                         var locationMaster = new LocationMaster();
 
-                        int index = 0;
+                        int index = -1;
                         foreach (dynamic record in sightingsFile)
                         {
+                            index++;
                             try
                             {
                                 //  SIGHTINGS BATCH FILE TRANSFORMATION
@@ -192,7 +197,7 @@ namespace Monarch.Controllers
                                 }
                                 else if (record.Event.ToUpper() == "S")
                                 {
-                                    if (record.Tag.IsNull) // if the tag IS null, then it's a human
+                                    if (record.Tag == null) // if the tag IS null, then it's a human
                                     {
                                         string message;
                                         // tries to find the reporter from the user name, if it can't it'll throw an error
@@ -269,6 +274,7 @@ namespace Monarch.Controllers
                                         log.Add(
                                             string.Format("Could not add record: [{0}] because the tag \'{1}\' already exists.",
                                                 index, record.Tag));
+                                        continue;
                                     }
 
                                     // look for a tagger match
@@ -279,6 +285,7 @@ namespace Monarch.Controllers
                                         log.Add(
                                             string.Format("Could not add record: [{0}] could not find tagger: {1}",
                                                 index, message));
+                                        continue;
                                     }
 
                                     // master the location
@@ -289,6 +296,7 @@ namespace Monarch.Controllers
                                     {
                                         log.Add(string.Format("Could not add record: [{0}]. "
                                             + "Could not verify location: {1}", index, message));
+                                        continue;
                                     }
 
                                     db.Butterflies.Add(new Butterfly
@@ -313,12 +321,13 @@ namespace Monarch.Controllers
                                 log.Add(string.Format("Could not add record: [{0}]: {1}", index, e.Message));
                                 continue;
                             }
-                            index++;
                         }
                     }
 
                 }
-                
+
+                ViewBag.Log = log;
+
                 var fileContents = log.ToString();
                 return RedirectToAction("Index");
             }

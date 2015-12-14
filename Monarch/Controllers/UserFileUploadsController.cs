@@ -69,7 +69,7 @@ namespace Monarch.Controllers
 
                     Regex digitsOnly = new Regex(@"[^\d]"); // this to remove non-numerical characters for phone numbers
 
-
+                    double dummyDouble;
                     var usersFile = new FixedWidthParser
                     (
                         filePath: "users.txt",
@@ -82,10 +82,10 @@ namespace Monarch.Controllers
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => data,
                                 conformanceTest: stringToTest =>
-                                       stringToTest.ToUpper() == "R"
-                                    || stringToTest.ToUpper() == "T"
-                                    || stringToTest.ToUpper() == "M"
-                                    || stringToTest.ToUpper() == "A"
+                                       stringToTest.ToUpper().Trim() == "R"
+                                    || stringToTest.ToUpper().Trim() == "T"
+                                    || stringToTest.ToUpper().Trim() == "M"
+                                    || stringToTest.ToUpper().Trim() == "A"
                             ),
                             new FixedWidthColumn<string>
                             (
@@ -95,6 +95,22 @@ namespace Monarch.Controllers
                                 conversionFromDataToString: data => data,
                                 conformanceTest: stringToTest => true
                             ),
+                            //new FixedWidthColumn<double>
+                            //(
+                            //    key: "Latitude",
+                            //    length: 11,
+                            //    conversionFromStringToDataType: dataString => double.Parse(dataString),
+                            //    conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                            //    conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
+                            //),
+                            //new FixedWidthColumn<double>
+                            //(
+                            //    key: "Longitude",
+                            //    length: 11,
+                            //    conversionFromStringToDataType: dataString => double.Parse(dataString),
+                            //    conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                            //    conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
+                            //),
                             new FixedWidthColumn<string>
                             (
                                 key: "StreetAddress",
@@ -163,6 +179,8 @@ namespace Monarch.Controllers
                             ),
                         }
                     );
+                    usersFile.HeaderLead = "H";
+                    usersFile.FooterLead = "T";
 
                     using (var reader = new StreamReader(upload.InputStream))
                     {
@@ -171,14 +189,17 @@ namespace Monarch.Controllers
                         if (!usersFile.TryRead(reader, out errorMessage))
                         {
                             log.Add("Could not parse users file. Check the file and try again.\n" + errorMessage);
-                            throw new NotImplementedException("Couldn't read the batch file. TODO: add some way to handle this");
+                            throw new NotImplementedException("Couldn't read the batch file. TODO: add some way to handle this\n" + errorMessage);
                         }
 
                         var locationMaster = new LocationMaster();
 
-                        int index = 0;
+                        int index = -1;
                         foreach(dynamic record in usersFile)
                         {
+                            index++;
+                            string test = record.ToString();
+                            Console.WriteLine(record);
                             try
                             {
                                 // USERS BATCH FILE TRANSFORMATION LOGIC
@@ -193,10 +214,12 @@ namespace Monarch.Controllers
                                             record.UserName));
                                         continue;
                                     }
+
+                                    Organization organization = null;
                                     // identify organization name (if any)
                                     if (record.Organization != null)
                                     {
-                                        var organization = findOrganizationFromUniqueName(record.Organization);
+                                        organization = findOrganizationFromUniqueName(record.Organization);
 
                                         if (organization == null)
                                         {
@@ -205,24 +228,119 @@ namespace Monarch.Controllers
                                                 record.Organization));
                                             continue;
                                         }
-                                        
                                     }
+                                    string message;
+                                    if (!locationMaster.TryMasterLocation(null, null,
+                                        record.City, record.State, record.Country, out message))
+                                    {
+                                        log.Add(string.Format("Could not add record: [{0}]: {1}", index, message));
+                                        continue;
+                                    }
+
+                                    // ADD A NEW MONITOR WITH ALL THE MASTERED INFORMATION YAY!
+                                    db.Monitors.Add(new Monitor
+                                    {
+                                        City = locationMaster.City,
+                                        Country = locationMaster.Country,
+                                        DisplayName = record.Name,
+                                        Latitude = locationMaster.Latitude,
+                                        Longitude = locationMaster.Longitude,
+                                        Organization = organization,
+                                        PostalCode = locationMaster.PostalCode,
+                                        StateProvince = locationMaster.State,
+                                        UniqueName = record.UserName,
+                                        UserFileUpload = userFileUpload
+                                    });
+                                    db.SaveChanges();
+                                }
+                                else // if record type is an R , T, or A (a person)
+                                {
+                                    var reporter = findReporterFromUsername(record.UserName);
+                                    if (reporter != null)
+                                    {
+                                        log.Add(string.Format(
+                                            "Could not add record: [{0}] because username \'{1}\' already exists.",
+                                            record.UserName));
+                                    }
+
+                                    Organization organization = null;
+                                    // identify organization name (if any)
+                                    if (record.Organization != null)
+                                    {
+                                        organization = findOrganizationFromUniqueName(record.Organization);
+
+                                        if (organization == null)
+                                        {
+                                            log.Add(string.Format(
+                                                "Could not add record: [{0}] because the record lists and Organization UniqueName: \'{1}\' that does exist.",
+                                                index, record.Organization));
+                                            continue;
+                                        }
+                                    }
+
+                                    var reporterToBeAdded = new Reporter
+                                    {
+                                        UserName = record.UserName,
+                                        CellPhone = record.CellPhone,
+                                        HomePhone = record.HomePhone,
+                                        StreetAddress = record.StreetAddress
+                                    };
+
+                                    var reporterDetail = new ReporterDetail
+                                    {
+                                        Organization = organization,
+                                        Reporter = reporterToBeAdded
+                                    };
+
+                                    if (reporterToBeAdded.Details == null)
+                                        reporterToBeAdded.Details = new List<ReporterDetail>();
+                                    reporterToBeAdded.Details.Add(reporterDetail);
+
+                                    db.Reporters.Add(reporterToBeAdded);
+                                    db.SaveChanges();
                                 }
 
                             }
                             catch (Exception e) // might as well catch everything just in case
                             {
-                                log.Add(string.Format("Could not add record: [{0}]: {1}", index, e.Message));
+                                log.Add(string.Format("random expcetion Could not add record: [{0}]: {1}", index, e.Message));
                                 continue;
                             }
+                            
                         }
                     }
                 }
-                
+                var breakhere = "fdsfds";
                 return RedirectToAction("Index");
             }
 
             return View(userFileUpload);
+        }
+
+        private Reporter findReporterFromUsername(string username)
+        {
+            var reporters = from r in db.Reporters
+                            where r.UserName == username
+                            select r;
+
+            if (reporters.Count() <= 0)
+            {
+                return null;
+            }
+
+            if (reporters.Count() == 1)
+            {
+                return reporters.First();
+            }
+
+            if (reporters.Count() > 1)
+            {
+                throw new InvalidOperationException(string.Format(
+                    "More than one reporter was found with username \'{0}\'. Please contact your database admin!",
+                    username));
+            }
+
+            return null;
         }
 
         private Organization findOrganizationFromUniqueName(string uniqueName)

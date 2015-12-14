@@ -29,6 +29,13 @@
             </div>
         </div>
     </div>
+
+    <table>
+        @foreach (string entry in ViewBag.Log)
+        {
+            <tr><td>@entry</td></tr>
+        }
+    </table>
 }
 
 <div>
