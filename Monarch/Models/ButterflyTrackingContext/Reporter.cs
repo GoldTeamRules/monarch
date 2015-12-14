@@ -8,6 +8,8 @@ using Microsoft.AspNet.Identity;
 
 namespace Monarch.Models.ButterflyTrackingContext
 {
+    public enum ReporterType { Reporter, Tagger, Admin }
+
     public class Reporter
     {
         public int ReporterId { get; set; }
@@ -26,6 +28,10 @@ namespace Monarch.Models.ButterflyTrackingContext
         public string PostalCode { get; set; }
         public string HomePhone { get; set; }
         public string CellPhone { get; set; }
+        [Required]
+        public ReporterType ReporterType { get; set; }
+        [Required]
+        public bool IsConfigured { get; set; }
 
         public virtual List<ReporterDetail> Details { get; set; }
         public virtual UserFileUpload UserFileUpload { get;set; }

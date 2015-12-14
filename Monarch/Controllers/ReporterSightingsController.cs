@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
+using Microsoft.AspNet.Identity;
 
 namespace Monarch.Controllers
 {
@@ -49,10 +50,11 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ReporterSightingId,ReporterId,SightingFileUploadId,Latitude,Longitude,DateTime,City,StateProvince,Country,PostalCode")] ReporterSighting reporterSighting)
+        public ActionResult Create([Bind(Include = "ReporterSightingId,SightingFileUploadId,Latitude,Longitude,DateTime,City,StateProvince,Country,PostalCode")] ReporterSighting reporterSighting)
         {
             if (ModelState.IsValid)
             {
+                reporterSighting.ReporterId = db.GetReporterIdFromUserId(new Guid(User.Identity.GetUserId()), User.Identity.Name);
                 db.ReporterSightings.Add(reporterSighting);
                 db.SaveChanges();
                 return RedirectToAction("Index");

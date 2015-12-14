@@ -30,10 +30,15 @@ namespace Monarch.Models.ButterflyTrackingContext
             modelBuilder.Entity<SightingFileUpload>().HasRequired(i => i.Reporter).WithOptional().WillCascadeOnDelete(false);
         }
 
+        public int GetReporterIdFromUserId(string userId, string userName)
+        {
+            return GetReporterIdFromUserId(new Guid(userId), userName);
+        }
+
         public int GetReporterIdFromUserId(Guid userId, string userName)
         {
             var reporterQueryByUserId = from r in Reporters
-                           where r.UserId.Equals(userId)
+                           where r.UserId == userId
                            select r.ReporterId;
 
             if (reporterQueryByUserId.Count() > 1)
@@ -53,7 +58,7 @@ namespace Monarch.Models.ButterflyTrackingContext
             {
                 // check to see if there is a match on username
                 var reporterQueryByUserName = from r in Reporters
-                                              where r.UserName.Equals(userName)
+                                              where r.UserName == userName
                                               select r.UserName;
 
                 // check to see if there are more than one reporter per username
@@ -80,8 +85,11 @@ namespace Monarch.Models.ButterflyTrackingContext
                     Reporters.Add(new Reporter
                     {
                         UserId = userId,
-                        UserName = userName
+                        UserName = userName,
+                        ReporterType = ReporterType.Reporter,
+                        IsConfigured = false
                     });
+                    SaveChanges();
                 }
             }
             return -1;
