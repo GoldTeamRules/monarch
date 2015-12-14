@@ -306,6 +306,8 @@
     <Content Include="Views\Butterflies\Details.cshtml" />
     <Content Include="Views\Butterflies\Edit.cshtml" />
     <Content Include="Views\Butterflies\Index.cshtml" />
+    <Content Include="Views\Reporters\EditMe.cshtml" />
+    <Content Include="Views\Reporters\Me.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

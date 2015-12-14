@@ -18,6 +18,7 @@ namespace Monarch.Controllers
     public class SightingFileUploadsController : Controller
     {
         private ButterflyTrackingContext db = new ButterflyTrackingContext();
+        private List<String> log;
 
         // GET: SightingFileUploads
         public ActionResult Index()
@@ -55,10 +56,9 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "SightingFileUploadId")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
         {
-            if (ViewBag.Log == null)
-                ViewBag.Log = new List<string>();
 
-            var log = new List<string>();
+            if (log == null)
+                log = new List<string>();
             if (ModelState.IsValid)
             {
                 if (upload != null && upload.ContentLength > 0)
