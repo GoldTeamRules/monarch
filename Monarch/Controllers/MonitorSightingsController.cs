@@ -17,7 +17,7 @@ namespace Monarch.Controllers
         // GET: MonitorSightings
         public ActionResult Index()
         {
-            var machineSightings = db.MachineSightings.Include(m => m.Butterfly).Include(m => m.Monitor).Include(m => m.SightingFileUpload);
+            var machineSightings = db.MonitorSightings.Include(m => m.Butterfly).Include(m => m.Monitor).Include(m => m.SightingFileUpload);
             return View(machineSightings.ToList());
         }
 
@@ -28,7 +28,7 @@ namespace Monarch.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MonitorSighting monitorSighting = db.MachineSightings.Find(id);
+            MonitorSighting monitorSighting = db.MonitorSightings.Find(id);
             if (monitorSighting == null)
             {
                 return HttpNotFound();
@@ -40,7 +40,7 @@ namespace Monarch.Controllers
         public ActionResult Create()
         {
             ViewBag.ButterflyId = new SelectList(db.Butterflies, "ButterflyId", "Name");
-            ViewBag.MonitorId = new SelectList(db.MachineMonitors, "MonitorId", "UniqueName");
+            ViewBag.MonitorId = new SelectList(db.Monitors, "MonitorId", "UniqueName");
             ViewBag.SightingFileUploadId = new SelectList(db.SightingFileUploads, "SightingFileUploadId", "SightingFileUploadId");
             return View();
         }
@@ -54,13 +54,13 @@ namespace Monarch.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.MachineSightings.Add(monitorSighting);
+                db.MonitorSightings.Add(monitorSighting);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
             ViewBag.ButterflyId = new SelectList(db.Butterflies, "ButterflyId", "Name", monitorSighting.ButterflyId);
-            ViewBag.MonitorId = new SelectList(db.MachineMonitors, "MonitorId", "UniqueName", monitorSighting.MonitorId);
+            ViewBag.MonitorId = new SelectList(db.Monitors, "MonitorId", "UniqueName", monitorSighting.MonitorId);
             ViewBag.SightingFileUploadId = new SelectList(db.SightingFileUploads, "SightingFileUploadId", "SightingFileUploadId", monitorSighting.SightingFileUploadId);
             return View(monitorSighting);
         }
@@ -72,13 +72,13 @@ namespace Monarch.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MonitorSighting monitorSighting = db.MachineSightings.Find(id);
+            MonitorSighting monitorSighting = db.MonitorSightings.Find(id);
             if (monitorSighting == null)
             {
                 return HttpNotFound();
             }
             ViewBag.ButterflyId = new SelectList(db.Butterflies, "ButterflyId", "Name", monitorSighting.ButterflyId);
-            ViewBag.MonitorId = new SelectList(db.MachineMonitors, "MonitorId", "UniqueName", monitorSighting.MonitorId);
+            ViewBag.MonitorId = new SelectList(db.Monitors, "MonitorId", "UniqueName", monitorSighting.MonitorId);
             ViewBag.SightingFileUploadId = new SelectList(db.SightingFileUploads, "SightingFileUploadId", "SightingFileUploadId", monitorSighting.SightingFileUploadId);
             return View(monitorSighting);
         }
@@ -97,7 +97,7 @@ namespace Monarch.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.ButterflyId = new SelectList(db.Butterflies, "ButterflyId", "Name", monitorSighting.ButterflyId);
-            ViewBag.MonitorId = new SelectList(db.MachineMonitors, "MonitorId", "UniqueName", monitorSighting.MonitorId);
+            ViewBag.MonitorId = new SelectList(db.Monitors, "MonitorId", "UniqueName", monitorSighting.MonitorId);
             ViewBag.SightingFileUploadId = new SelectList(db.SightingFileUploads, "SightingFileUploadId", "SightingFileUploadId", monitorSighting.SightingFileUploadId);
             return View(monitorSighting);
         }
@@ -109,7 +109,7 @@ namespace Monarch.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MonitorSighting monitorSighting = db.MachineSightings.Find(id);
+            MonitorSighting monitorSighting = db.MonitorSightings.Find(id);
             if (monitorSighting == null)
             {
                 return HttpNotFound();
@@ -122,8 +122,8 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            MonitorSighting monitorSighting = db.MachineSightings.Find(id);
-            db.MachineSightings.Remove(monitorSighting);
+            MonitorSighting monitorSighting = db.MonitorSightings.Find(id);
+            db.MonitorSightings.Remove(monitorSighting);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

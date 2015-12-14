@@ -10,6 +10,7 @@ using Monarch.Models.ButterflyTrackingContext;
 using System.IO;
 using System.Text;
 using SimpleFixedWidthParser;
+using Monarch.Models;
 
 namespace Monarch.Controllers
 {
@@ -97,8 +98,7 @@ namespace Monarch.Controllers
                                 length: 11,
                                 conversionFromStringToDataType: dataString => double.Parse(dataString),
                                 conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
-                                conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble),
-                                nullable: false
+                                conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
                             ),
                             new FixedWidthColumn<double>
                             (
@@ -106,8 +106,7 @@ namespace Monarch.Controllers
                                 length: 11,
                                 conversionFromStringToDataType: dataString => double.Parse(dataString),
                                 conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
-                                conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble),
-                                nullable: false
+                                conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
                             ),
                             new FixedWidthColumn<string>
                             (
@@ -161,8 +160,11 @@ namespace Monarch.Controllers
                             // logic if the file couldn't get parsed
                         }
 
+                        var locationMaster = new LocationMaster();
+
                         var stringBuilder = new StringBuilder();
                         int index = 0;
+
                         foreach (dynamic record in sightingsFile)
                         {
                             try
@@ -174,7 +176,7 @@ namespace Monarch.Controllers
                                         index));
                                     continue; // go on to the next record
                                 }
-                                else if (record.Event == "S")
+                                else if (record.Event.ToUpper() == "S")
                                 {
                                     if (record.Tag.IsNull) // if the tag IS null, then it's a human
                                     {
@@ -184,16 +186,111 @@ namespace Monarch.Controllers
                                             record.UserNameOrReporterId.ToString(), out message);
                                         if (reporter == null)
                                         {
-                                            stringBuilder.AppendLine("Could not add record: [{0}] " + message);
+                                            stringBuilder.AppendLine(string.Format("Could not add record: [{0}] {1}", index, message));
                                             continue; // go on to the next record
                                         }
                                         // master location then create new human sighting
-                                        //db.ReporterSightings.Add(new ReporterSighting { Reporter=reporter, DateTime=record.DateTime });
-                                    }
-                                    else // if it is NOT null, then it's monitor sighting
-                                    {
+
+                                        if (!locationMaster.TryMasterLocation(
+                                            record.Latitude, record.Longitude,
+                                            record.City, record.State, record.Country,
+                                            out message))
+                                        {
+                                            stringBuilder.AppendLine(string.Format("Could not add record: [{0}] {1}", index, message));
+                                            continue; // go on to the next record
+                                        }
+
+
+                                        // ADD NEW REPORTER SIGHTING!!! WE DID IT YAYAYAYAYAY!!!!
+                                        db.ReporterSightings.Add(new ReporterSighting
+                                        {
+                                            City = locationMaster.City,
+                                            Country = locationMaster.Country,
+                                            DateTime = record.DateTime,
+                                            Latitude = locationMaster.Latitude,
+                                            Longitude = locationMaster.Longitude,
+                                            PostalCode = locationMaster.PostalCode,
+                                            Reporter = reporter,
+                                            SightingFileUpload = sightingFileUpload,
+                                            StateProvince = locationMaster.State
+                                        });
+                                        db.SaveChanges();
 
                                     }
+                                    else // if the tag is NOT null then it's a monitor sighting
+                                    {
+                                        // check the butterfly id
+                                        string message;
+                                        var butterfly = findAndVerifyButterflyForMonitors(record.Tag, record.Species, out message);
+                                        if (butterfly == null)
+                                        {
+                                            stringBuilder.AppendLine(string.Format("Could not add record [{0}] {1}", index, message));
+                                            continue;
+                                        }
+
+                                        var monitor = findAndVerifyMonitor(record.UserNameOrReporterId, record.Latitude, record.Longitude, out message);
+                                        if (monitor == null)
+                                        {
+                                            stringBuilder.AppendLine(string.Format("Could not add record [(0)] {1}", index, message));
+                                            continue;
+                                        }
+
+                                        // WE ADDED A NEW SIGHTINGS ENTRY YAYEYAHAYAYYAY!!!
+                                        db.MonitorSightings.Add(new MonitorSighting
+                                        {
+                                            Butterfly = butterfly,
+                                            DateTime = record.DateTime,
+                                            Monitor = monitor,
+                                            SightingFileUpload = sightingFileUpload
+                                        });
+                                        db.SaveChanges();
+                                    }
+                                }
+                                else if (record.Event.ToUpper() == "T")
+                                {
+                                    // check to see if butterfly tag exists in system (it shouldn't)
+                                    var butterfly = db.Butterflies.Find(record.Tag); // this returns null if it can't find the element
+                                    if (butterfly != null) // so if this value isn't null then we found a tag
+                                    {
+                                        stringBuilder.AppendLine(
+                                            string.Format("Could not add record: [{0}] because the tag \'{1}\' already exists.",
+                                                index, record.Tag));
+                                    }
+
+                                    // look for a tagger match
+                                    string message;
+                                    var tagger = findReporterFromIdOrUserName(record.UserNameOrReporterId, out message);
+                                    if (tagger == null)
+                                    {
+                                        stringBuilder.AppendLine(
+                                            string.Format("Could not add record: [{0}] could not find tagger: {1}",
+                                                index, message));
+                                    }
+
+                                    // master the location
+                                    if (!locationMaster.TryMasterLocation(
+                                        record.Latitude, record.Longitude,
+                                        record.City, record.State, record.Country,
+                                        out message))
+                                    {
+                                        stringBuilder.AppendLine(string.Format("Could not add record: [{0}]. "
+                                            + "Could not verify location: {1}", index, message));
+                                    }
+
+                                    db.Butterflies.Add(new Butterfly
+                                    {
+                                        City = locationMaster.City,
+                                        Country = locationMaster.Country,
+                                        DateTime = record.DateTime,
+                                        Latitude = locationMaster.Latitude,
+                                        Longitude = locationMaster.Longitude,
+                                        //Name = ""
+                                        PostalCode = locationMaster.PostalCode,
+                                        Reporter = tagger,
+                                        SightingFileUpload = sightingFileUpload,
+                                        Species = record.Species,
+                                        StateProvince = locationMaster.State
+                                    });
                                 }
                                 
                             }
@@ -214,6 +311,82 @@ namespace Monarch.Controllers
             }
 
             return View(sightingFileUpload);
+        }
+
+        private Monitor findAndVerifyMonitor(string uniqueNameOrMonitorId, double latitude, double longitude, out string message)
+        {
+            int monitorId;
+            Monitor monitor;
+
+            if (int.TryParse(uniqueNameOrMonitorId, out monitorId))
+            {
+                monitor = db.Monitors.Find(monitorId);
+                if (monitor == null) // if we didn't find a monitor
+                {
+                    message = string.Format("No monitor was found with Id: \'{1}\'", monitorId);
+                    return null;
+                }
+            }
+            else // cannot parse as int; now try to match unique name
+            {
+                var monitors = from m in db.Monitors
+                                where m.UniqueName.ToLower().Equals(uniqueNameOrMonitorId.ToLower())
+                                select m;
+                if (monitors.Count() <= 0) // case where no monitors are returned
+                {
+                    message = string.Format("No monitor was found with UserName: \'{1}\'", uniqueNameOrMonitorId);
+                    return null;
+                }
+                else if (monitors.Count() > 1) // case where there's more than one 
+                {
+                    message = string.Format("ERROR: two reporters exist with UserName: \'{1}\'"
+                        + "Contact your database administrator", uniqueNameOrMonitorId);
+                    return null;
+                }
+                else
+                {
+                    monitor = monitors.First();
+                    if (monitor == null)
+                    {
+                        message = string.Format("Monitor with UniqueName: \'{1}\' returned a null value.",
+                          uniqueNameOrMonitorId);
+                        return null;
+                    }
+                }
+            }
+
+            // check to see if latitude and longitude roughly match
+            if (Math.Round(monitor.Latitude) == Math.Round(latitude)
+                && Math.Round(monitor.Longitude) == Math.Round(longitude))
+            {
+                message = "";
+                return monitor;
+            }
+            else
+            {
+                message = string.Format("Location of monitor \'{0}\' from database is: ({1},{2})"
+                    + " and location or record: ({3},{4})", monitor.UniqueName, monitor.Latitude, monitor.Longitude, latitude, longitude);
+                return null;
+            }
+        }
+
+        private Butterfly findAndVerifyButterflyForMonitors(int butterflyId, string species, out string message)
+        {
+            var butterfly = db.Butterflies.Find(butterflyId);
+            if (butterfly == null)
+            {
+                message = string.Format("The tag \'{0}\' does not exist."
+                   + "Add the tag first, then you can add this record.", butterflyId);
+                return null; // throw out record and move on
+            }
+            if (!butterfly.Species.ToLower().Equals(species.ToLower()))
+            {
+                message = string.Format("The tag returned a butterfly with the Species \'{1}\' "
+                    + "and the record contains the species {2}", butterfly.Species, species);
+                return null; // throw out record and move on
+            }
+            message = "";
+            return butterfly;
         }
 
         private Reporter findReporterFromIdOrUserName(string userNameOrReporterId, out string message)

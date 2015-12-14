@@ -12,8 +12,6 @@ namespace Monarch.Models.ButterflyTrackingContext
         [Required]
         public int ReporterId { get; set; }
         [Required]
-        public string Name { get; set; }
-        [Required]
         public string Species { get; set; }
         // FK
         public int? SightingFileUploadId { get; set; }

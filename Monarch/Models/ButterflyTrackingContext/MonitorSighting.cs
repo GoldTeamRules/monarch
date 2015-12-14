@@ -20,9 +20,6 @@ namespace Monarch.Models.ButterflyTrackingContext
 
         [Required]
         public DateTime DateTime { get; set; }
-
-        public int FileUploadId { get; set; }
-
         // linked objects
         public virtual Monitor Monitor { get; set; }
         public virtual Butterfly Butterfly { get; set; }

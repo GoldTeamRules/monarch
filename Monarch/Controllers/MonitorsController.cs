@@ -18,7 +18,7 @@ namespace Monarch.Controllers
         // GET: Monitors
         public ActionResult Index()
         {
-            var machineMonitors = db.MachineMonitors.Include(m => m.Organization).Include(m => m.UserFileUpload);
+            var machineMonitors = db.Monitors.Include(m => m.Organization).Include(m => m.UserFileUpload);
             return View(machineMonitors.ToList());
         }
 
@@ -29,7 +29,7 @@ namespace Monarch.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Monitor monitor = db.MachineMonitors.Find(id);
+            Monitor monitor = db.Monitors.Find(id);
             if (monitor == null)
             {
                 return HttpNotFound();
@@ -57,7 +57,7 @@ namespace Monarch.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.MachineMonitors.Add(monitor);
+                db.Monitors.Add(monitor);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -75,7 +75,7 @@ namespace Monarch.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Monitor monitor = db.MachineMonitors.Find(id);
+            Monitor monitor = db.Monitors.Find(id);
             if (monitor == null)
             {
                 return HttpNotFound();
@@ -110,7 +110,7 @@ namespace Monarch.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Monitor monitor = db.MachineMonitors.Find(id);
+            Monitor monitor = db.Monitors.Find(id);
             if (monitor == null)
             {
                 return HttpNotFound();
@@ -123,8 +123,8 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Monitor monitor = db.MachineMonitors.Find(id);
-            db.MachineMonitors.Remove(monitor);
+            Monitor monitor = db.Monitors.Find(id);
+            db.Monitors.Remove(monitor);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

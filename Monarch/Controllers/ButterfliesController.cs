@@ -49,7 +49,7 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ButterflyId,ReporterId,Name,Species,SightingFileUploadId,Latitude,Longitude,City,StateProvince,Country,PostalCode,DateTime")] Butterfly butterfly)
+        public ActionResult Create([Bind(Include = "ButterflyId,ReporterId,Species,SightingFileUploadId,Latitude,Longitude,City,StateProvince,Country,PostalCode,DateTime")] Butterfly butterfly)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ButterflyId,ReporterId,Name,Species,SightingFileUploadId,Latitude,Longitude,City,StateProvince,Country,PostalCode,DateTime")] Butterfly butterfly)
+        public ActionResult Edit([Bind(Include = "ButterflyId,ReporterId,Species,SightingFileUploadId,Latitude,Longitude,City,StateProvince,Country,PostalCode,DateTime")] Butterfly butterfly)
         {
             if (ModelState.IsValid)
             {

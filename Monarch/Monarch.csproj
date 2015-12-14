@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Geocoding, Version=3.3.0.0, Culture=neutral, PublicKeyToken=7c714700b88674c7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Geocoding.net.3.3.0\lib\net40\Geocoding.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -190,7 +194,6 @@
     <Compile Include="Models\ButterflyTrackingContext\Butterfly.cs" />
     <Compile Include="Models\ButterflyTrackingContext\ButterflyTrackingContext.cs" />
     <Compile Include="Models\ButterflyTrackingContext\ButterflyTrackingInitializer.cs" />
-    <Compile Include="Models\ButterflyTrackingContext\File.cs" />
     <Compile Include="Models\ButterflyTrackingContext\ReporterSighting.cs" />
     <Compile Include="Models\ButterflyTrackingContext\Monitor.cs" />
     <Compile Include="Models\ButterflyTrackingContext\MonitorSighting.cs" />
@@ -201,6 +204,7 @@
     <Compile Include="Models\ButterflyTrackingContext\UserFileUpload.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\LocationMaster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -262,11 +266,6 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Butterflies\Create.cshtml" />
-    <Content Include="Views\Butterflies\Delete.cshtml" />
-    <Content Include="Views\Butterflies\Details.cshtml" />
-    <Content Include="Views\Butterflies\Edit.cshtml" />
-    <Content Include="Views\Butterflies\Index.cshtml" />
     <Content Include="Views\Reporters\Create.cshtml" />
     <Content Include="Views\Reporters\Delete.cshtml" />
     <Content Include="Views\Reporters\Details.cshtml" />
@@ -302,6 +301,11 @@
     <Content Include="Views\MonitorSightings\Details.cshtml" />
     <Content Include="Views\MonitorSightings\Edit.cshtml" />
     <Content Include="Views\MonitorSightings\Index.cshtml" />
+    <Content Include="Views\Butterflies\Create.cshtml" />
+    <Content Include="Views\Butterflies\Delete.cshtml" />
+    <Content Include="Views\Butterflies\Details.cshtml" />
+    <Content Include="Views\Butterflies\Edit.cshtml" />
+    <Content Include="Views\Butterflies\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
