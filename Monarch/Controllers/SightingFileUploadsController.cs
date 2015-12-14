@@ -52,11 +52,13 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "SightingFileUploadId,UserId,DateTime")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
         {
-            var sb = new StringBuilder();
+            var stringBuilder = new StringBuilder();
             if (ModelState.IsValid)
             {
                 if (upload != null && upload.ContentLength > 0)
                 {
+                    db.SightingFileUploads.Add(sightingFileUpload);
+                    db.SaveChanges();
                     DateTime dummyDate;
                     double dummyDouble;
                     int dummyInt;
@@ -162,7 +164,6 @@ namespace Monarch.Controllers
 
                         var locationMaster = new LocationMaster();
 
-                        var stringBuilder = new StringBuilder();
                         int index = 0;
 
                         foreach (dynamic record in sightingsFile)
@@ -284,13 +285,13 @@ namespace Monarch.Controllers
                                         DateTime = record.DateTime,
                                         Latitude = locationMaster.Latitude,
                                         Longitude = locationMaster.Longitude,
-                                        //Name = ""
                                         PostalCode = locationMaster.PostalCode,
                                         Reporter = tagger,
                                         SightingFileUpload = sightingFileUpload,
                                         Species = record.Species,
                                         StateProvince = locationMaster.State
                                     });
+                                    db.SaveChanges();
                                 }
                                 
                             }
@@ -304,9 +305,8 @@ namespace Monarch.Controllers
                     }
 
                 }
-                db.SightingFileUploads.Add(sightingFileUpload);
-                db.SaveChanges();
-                var fileContents = sb.ToString();
+                
+                var fileContents = stringBuilder.ToString();
                 return RedirectToAction("Index");
             }
 

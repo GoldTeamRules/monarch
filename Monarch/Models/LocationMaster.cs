@@ -21,7 +21,7 @@ namespace Monarch.Models
 
         public LocationMaster()
         {
-            if (string.IsNullOrEmpty(ApiKey))
+            if (!string.IsNullOrEmpty(ApiKey))
                 geocoder = new GoogleGeocoder(ApiKey);
             else
                 geocoder = new GoogleGeocoder();
