@@ -81,8 +81,8 @@ namespace Monarch.Controllers
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => data,
                                 conformanceTest: stringToTest =>
-                                       stringToTest.Trim().ToUpper().Equals("S")
-                                    || stringToTest.Trim().ToUpper().Equals("T")
+                                       stringToTest.Trim().ToUpper() == "S"
+                                    || stringToTest.Trim().ToUpper() == "T"
                             ),
                             new FixedWidthColumn<string>
                             (
@@ -337,7 +337,7 @@ namespace Monarch.Controllers
             else // cannot parse as int; now try to match unique name
             {
                 var monitors = from m in db.Monitors
-                                where m.UniqueName.ToLower().Equals(uniqueNameOrMonitorId.ToLower())
+                                where m.UniqueName.ToLower() == uniqueNameOrMonitorId.ToLower()
                                 select m;
                 if (monitors.Count() <= 0) // case where no monitors are returned
                 {
@@ -386,7 +386,7 @@ namespace Monarch.Controllers
                    + "Add the tag first, then you can add this record.", butterflyId);
                 return null; // throw out record and move on
             }
-            if (!butterfly.Species.ToLower().Equals(species.ToLower()))
+            if (butterfly.Species.ToLower() != species.ToLower())
             {
                 message = string.Format("The tag returned a butterfly with the Species \'{1}\' "
                     + "and the record contains the species {2}", butterfly.Species, species);
@@ -413,7 +413,7 @@ namespace Monarch.Controllers
             else // cannot parse as int; now try to match user name
             {
                 var reporters = from r in db.Reporters
-                                where r.UserName.ToLower().Equals(userNameOrReporterId.ToLower())
+                                where r.UserName.ToLower() == userNameOrReporterId.ToLower()
                                 select r;
                 if (reporters.Count() <= 0) // case where no reporters are returned
                 {

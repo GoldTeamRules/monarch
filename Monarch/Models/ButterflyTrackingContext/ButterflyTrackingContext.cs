@@ -60,7 +60,7 @@ namespace Monarch.Models.ButterflyTrackingContext
                 // check to see if there is a match on username
                 var reporterQueryByUserName = from r in Reporters
                                               where r.UserName == userName
-                                              select r.UserName;
+                                              select r;
 
                 // check to see if there are more than one reporter per username
                 if (reporterQueryByUserName.Count() > 1)
@@ -76,21 +76,26 @@ namespace Monarch.Models.ButterflyTrackingContext
                     // this would be the case when the batch file created a user
                     // This means that the AspNetUser has not been linked to this account yet.
                     // SO... We'll link these now
-                    //Reporters.Ed
+                    var reporter = reporterQueryByUserName.First();
+                    reporter.UserId = userId;
+                    SaveChanges();
+                    return reporter;
                 }
 
                 //no reporters by username have been found
                 if (reporterQueryByUserName.Count() <= 0)
                 {
                     // so we'll have to create a new reporter
-                    Reporters.Add(new Reporter
+                    var reporter = new Reporter
                     {
                         UserId = userId,
                         UserName = userName,
                         ReporterType = ReporterType.Reporter,
                         IsConfigured = false
-                    });
+                    };
+                    Reporters.Add(reporter);
                     SaveChanges();
+                    return reporter;
                 }
             }
             return null;
