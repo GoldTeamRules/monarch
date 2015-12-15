@@ -21,6 +21,8 @@ namespace Monarch.Models.ButterflyTrackingContext
         [Required]
         public DateTime DateTime { get; set; }
 
+        public string Specices { get; set; }
+
         public string City { get; set; }
         public string StateProvince { get; set; }
         public string Country { get; set; }

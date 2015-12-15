@@ -60,6 +60,12 @@
             </div>
         </div>
     </div>
+    <div class="container">
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div class="alert alert-warning" role="alert">You must logged in to access addtional funtionality.</div>
+    }
+    </div>
     <div class="container body-content">
         @RenderBody()
         <hr />

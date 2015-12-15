@@ -229,7 +229,8 @@ namespace Monarch.Controllers
                                             PostalCode = locationMaster.PostalCode,
                                             Reporter = reporter,
                                             SightingFileUpload = sightingFileUpload,
-                                            StateProvince = locationMaster.State
+                                            StateProvince = locationMaster.State,
+                                            Specices = record.Species
                                         });
                                         db.SaveChanges();
 

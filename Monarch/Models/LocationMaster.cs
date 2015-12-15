@@ -10,7 +10,7 @@ namespace Monarch.Models
     public class LocationMaster
     {
         private GoogleGeocoder geocoder;
-        public static readonly string ApiKey = ""; // API KEY HERE
+        public static readonly string ApiKey = "AIzaSyCpgsLNrZmhDoEYkJkzqBI1L7wDvcv9Fz0"; // API KEY HERE
 
         public double Latitude { get; private set; }
         public double Longitude { get; private set; }
