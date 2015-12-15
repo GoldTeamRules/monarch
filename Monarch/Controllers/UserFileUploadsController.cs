@@ -12,6 +12,8 @@ using SimpleFixedWidthParser;
 using System.Text.RegularExpressions;
 using Monarch.Models;
 using System.IO;
+using System.Data.Entity.Validation;
+using System.Text;
 
 namespace Monarch.Controllers
 {
@@ -36,11 +38,11 @@ namespace Monarch.Controllers
                 if (upload != null && upload.ContentLength > 0)
                 {
                     // get the reporter entity linked the user for uploading the file
-                    var reporterAttachedToUser = db.GetReporterIdFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                    var reporterAttachedToUser = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
                     userFileUpload.Reporter = reporterAttachedToUser;
                     userFileUpload.ReporterId = reporterAttachedToUser.ReporterId;
-                    // set the date of the sighting file upload to TODAY
-                    userFileUpload.DateTime = DateTime.Today;
+                    // set the date of the user file upload to NOW
+                    userFileUpload.DateTime = DateTime.Now;
                     db.UserFileUploads.Add(userFileUpload);
                     db.SaveChanges();
 
@@ -64,18 +66,18 @@ namespace Monarch.Controllers
                                     || stringToTest.ToUpper().Trim() == "M"
                                     || stringToTest.ToUpper().Trim() == "A"
                             ),
-                            //new FixedWidthColumn<string>
-                            //(
-                            //    key: "Name",
-                            //    length: 34,
-                            //    conversionFromStringToDataType: dataString => dataString,
-                            //    conversionFromDataToString: data => data,
-                            //    conformanceTest: stringToTest => true
-                            //),
+                            new FixedWidthColumn<string>
+                            (
+                                key: "Name",
+                                length: 36,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
                             new FixedWidthColumn<double>
                             (
                                 key: "Latitude",
-                                length: 11,
+                                length: 12,
                                 conversionFromStringToDataType: dataString => double.Parse(dataString),
                                 conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
                                 conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
@@ -83,7 +85,7 @@ namespace Monarch.Controllers
                             new FixedWidthColumn<double>
                             (
                                 key: "Longitude",
-                                length: 11,
+                                length: 12,
                                 conversionFromStringToDataType: dataString => double.Parse(dataString),
                                 conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
                                 conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
@@ -99,7 +101,7 @@ namespace Monarch.Controllers
                             new FixedWidthColumn<string>
                             (
                                 key: "City",
-                                length: 35,
+                                length: 34,
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => data,
                                 conformanceTest: stringToTest => true
@@ -114,8 +116,16 @@ namespace Monarch.Controllers
                             ),
                             new FixedWidthColumn<string>
                             (
+                                key: "Country",
+                                length: 30,
+                                conversionFromStringToDataType: dataString => dataString,
+                                conversionFromDataToString: data => data,
+                                conformanceTest: stringToTest => true
+                            ),
+                            new FixedWidthColumn<string>
+                            (
                                 key: "PostalCode",
-                                length: 13,
+                                length: 14,
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => data,
                                 conformanceTest: stringToTest => true
@@ -132,7 +142,7 @@ namespace Monarch.Controllers
                             new FixedWidthColumn<string>
                             (
                                 key: "HomePhone",
-                                length: 12,
+                                length: 14,
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => data,
                                 conformanceTest: stringToTest => true
@@ -141,7 +151,7 @@ namespace Monarch.Controllers
                             new FixedWidthColumn<string>
                             (
                                 key: "CellPhone",
-                                length: 12,
+                                length: 14,
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => data,
                                 conformanceTest: stringToTest => true
@@ -149,11 +159,12 @@ namespace Monarch.Controllers
                             new FixedWidthColumn<string>
                             (
                                 key: "Organization",
-                                length: 20,
+                                length: 30,
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => data,
                                 conformanceTest: stringToTest => true
-                            ),
+                            )
+                            // TOTAL RECORD LENGTH IS 296 CHARACTERS
                         }
                     );
                     usersFile.HeaderLead = "H";
@@ -167,7 +178,7 @@ namespace Monarch.Controllers
                         {
                             var error = new UserFileError
                             {
-                                Error = "Could not parse sightings batch file. <b>Check the file and try again.</b>\n\n"
+                                Error = "Could not parse users batch file. <b>Check the file and try again.</b>\n\n"
                                 + "<pre>"
                                     + errorMessage + "\n"
                                 + "</pre>",
@@ -182,6 +193,7 @@ namespace Monarch.Controllers
                         try
                         {
                             userFileUpload.SequenceNumber = usersFile.Header.Sequence;
+                            db.SaveChanges();
                         }
                         catch (Exception e)
                         {
@@ -194,8 +206,6 @@ namespace Monarch.Controllers
                         foreach(dynamic record in usersFile)
                         {
                             index++;
-                            string test = record.ToString(); // TODO remove this line
-                            Console.WriteLine(record);
                             try
                             {
                                 // USERS BATCH FILE TRANSFORMATION LOGIC
@@ -297,6 +307,20 @@ namespace Monarch.Controllers
                                 }
 
                             }
+                            catch (DbEntityValidationException e)
+                            {
+                                var sb = new StringBuilder();
+                                sb.AppendLine(string.Format("Could not add record: [{0}]: ", index));
+
+                                sb.AppendLine(string.Format("Entity of type \'{0}\' in state \'{1}\' has the following validation errors:",
+                                    e.EntityValidationErrors.First().Entry.Entity.GetType().Name, e.EntityValidationErrors.First().Entry.State));
+                                sb.AppendLine(string.Format("- Property: \'{0}\', Error: \'{1}\'",
+                                    e.EntityValidationErrors.First().ValidationErrors.First().PropertyName,
+                                    e.EntityValidationErrors.First().ValidationErrors.First().ErrorMessage));
+                                errors.Add(sb.ToString());
+                                sb.Clear();
+                                continue;
+                            }
                             catch (Exception e) // might as well catch everything just in case
                             {
                                 var inner = "";
@@ -314,9 +338,26 @@ namespace Monarch.Controllers
                 }
 
                 var log = new List<UserFileError>();
-                errors.ForEach(error => log.Add(new UserFileError { Error = error, UserFileUpload = userFileUpload }));
+                errors.ForEach(error => log.Add(new UserFileError { Error = error, UserFileUploadId = userFileUpload.UserFileUploadId }));
                 userFileUpload.Log = log;
-                db.SaveChanges();
+                log.ForEach(e => db.UserFileErrors.Add(e));
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    db.Dispose();
+                    db = null;
+                    db = new ButterflyTrackingContext();
+                    errors.ForEach(error => db.UserFileErrors.Add(
+                        new UserFileError
+                        {
+                            Error = error,
+                            UserFileUploadId = userFileUpload.UserFileUploadId
+                        }));
+                    db.SaveChanges();
+                }
 
                 return RedirectToAction("Index", "UserFileErrors", new { userFileUpload.UserFileUploadId } );
             }

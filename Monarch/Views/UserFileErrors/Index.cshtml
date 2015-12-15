@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Monarch.Models.ButterflyTrackingContext.UserFileError>
+
+@{
+    ViewBag.Title = "User File Upload Exception Report";
+}
+
+<h2>User File Exception Report</h2>
+<h3><small>If you don't see anything here then, you upload was successful!</small></h3>
+<table class="table table-striped">
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.Raw(item.Error)
+        </td>
+    </tr>
+}
+
+</table>

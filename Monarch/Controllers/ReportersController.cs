@@ -40,7 +40,7 @@ namespace Monarch.Controllers
         // GET: Reporters/Details/5
         public ActionResult Me()
         {
-            Reporter reporter = db.GetReporterIdFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+            Reporter reporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
             if (reporter == null)
             {
                 return HttpNotFound();
@@ -92,13 +92,11 @@ namespace Monarch.Controllers
         // GET: Reporters/EditMe
         public ActionResult EditMe()
         {
-            Reporter reporter = db.GetReporterIdFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+            Reporter reporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
             if (reporter == null)
             {
-                return HttpNotFound();
-                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId", reporter.UserFileUploadId);
             return View(reporter);
         }
 
@@ -107,15 +105,16 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditMe([Bind(Include = "Name,UserName,UserFileUploadId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone")] Reporter reporter)
+        public ActionResult EditMe([Bind(Include = "ReporterId,Name,UserName,UserFileUploadId,ReporterId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone")] Reporter reporter)
         {
+            reporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
             if (ModelState.IsValid)
             {
                 db.Entry(reporter).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Me");
             }
-            ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId", reporter.UserFileUploadId);
+            //ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId", reporter.UserFileUploadId);
             return View(reporter);
         }
 

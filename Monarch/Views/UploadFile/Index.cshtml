@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h1>Upload a Batch File</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                Upload a batch file to insert records into the butterfly tracking repository There are two types of files you can insert:
+                <ul>
+                    <li>Users batch file</li>
+                    <li>Sightings  batch file</li>
+                </ul>
+             </p>
+        </div>
+        <div class="col-md-6">
+            <h2>Users Batch File</h2>
+            <p>
+                The users batch file allows you to create new entities that can sight and log butterflies. This batch file creates new:
+                <ul>
+                    <li>Reporters</li>
+                    <li>Taggers</li>
+                    <li>Machine monitors</li>
+                </ul>
+                <a class="btn btn-primary" href="@Url.Action("Index", "UserFileUploads")" role="button">Upload users batch file</a>
+            </p>
+        </div>
+        <div class="col-md-6">
+            <h2>Sightings Batch File</h2>
+            <p>
+                The sightings batch file allows you to create new sighting events and new tagging events. This batch files creates new:
+                <ul>
+                    <li>Reporter sightings</li>
+                    <li>Machine monitors</li>
+                    <li>New butterfly tags</li>
+                </ul>
+                <a class="btn btn-primary" href="@Url.Action("Index", "SightingFileUploads")" role="button">Upload sightings batch file</a>
+            </p>
+        </div>
+    </div>
+</div>

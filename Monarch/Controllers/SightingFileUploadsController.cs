@@ -12,6 +12,7 @@ using System.Text;
 using SimpleFixedWidthParser;
 using Monarch.Models;
 using Microsoft.AspNet.Identity;
+using System.Data.Entity.Validation;
 
 namespace Monarch.Controllers
 {
@@ -39,10 +40,10 @@ namespace Monarch.Controllers
                 if (upload != null && upload.ContentLength > 0)
                 {
                     // get the reporter entity linked the user for uploading the file
-                    var reporterAttachedToUser = db.GetReporterIdFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                    var reporterAttachedToUser = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
                     sightingFileUpload.Reporter = reporterAttachedToUser;
                     sightingFileUpload.ReporterId = reporterAttachedToUser.ReporterId;
-                    // set the date of the sighting file upload to TODAY
+                    // set the date of the sighting file upload to NOW
                     sightingFileUpload.DateTime = DateTime.Now;
                     db.SightingFileUploads.Add(sightingFileUpload);
                     db.SaveChanges();
@@ -79,7 +80,7 @@ namespace Monarch.Controllers
                             new FixedWidthColumn<DateTime>
                             (
                                 key: "DateTime",
-                                length: 19,
+                                length: 20,
                                 conversionFromStringToDataType: dataString => DateTime.Parse(dataString),
                                 conversionFromDataToString: data => data.ToString(@"yyyy-MM-dd H:mm:ss "),
                                 conformanceTest: stringToTest => DateTime.TryParse(stringToTest, out dummyDate),
@@ -88,7 +89,7 @@ namespace Monarch.Controllers
                             new FixedWidthColumn<double>
                             (
                                 key: "Latitude",
-                                length: 11,
+                                length: 12,
                                 conversionFromStringToDataType: dataString => double.Parse(dataString),
                                 conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
                                 conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
@@ -96,7 +97,7 @@ namespace Monarch.Controllers
                             new FixedWidthColumn<double>
                             (
                                 key: "Longitude",
-                                length: 11,
+                                length: 12,
                                 conversionFromStringToDataType: dataString => double.Parse(dataString),
                                 conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
                                 conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
@@ -104,7 +105,7 @@ namespace Monarch.Controllers
                             new FixedWidthColumn<string>
                             (
                                 key: "City",
-                                length: 35,
+                                length: 34,
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => " " + data,
                                 conformanceTest: stringToTest => true
@@ -136,11 +137,12 @@ namespace Monarch.Controllers
                             new FixedWidthColumn<int>
                             (
                                 key: "Tag",
-                                length: 11,
+                                length: 10,
                                 conversionFromStringToDataType: dataString => int.Parse(dataString),
                                 conversionFromDataToString: data => data.ToString(),
                                 conformanceTest: stringToTest => { int dummyUint; return int.TryParse(stringToTest, out dummyUint); }
                             )
+                            // TOTAL RECORD LENGTH IS 200 CHARACTERS
                         }
                     );
 
@@ -168,6 +170,7 @@ namespace Monarch.Controllers
                         try
                         {
                             sightingFileUpload.SequenceNumber = sightingsFile.Header.Sequence;
+                            db.SaveChanges();
                         }
                         catch (Exception e)
                         {
@@ -311,20 +314,55 @@ namespace Monarch.Controllers
                                 }
                                 
                             }
+                            catch (DbEntityValidationException e)
+                            {
+                                var sb = new StringBuilder();
+                                sb.AppendLine(string.Format("Could not add record: [{0}]: ", index));
+                                    
+                                    sb.AppendLine(string.Format("Entity of type \'{0}\' in state \'{1}\' has the following validation errors:",
+                                        e.EntityValidationErrors.First().Entry.Entity.GetType().Name, e.EntityValidationErrors.First().Entry.State));
+                                        sb.AppendLine(string.Format("- Property: \'{0}\', Error: \'{1}\'",
+                                            e.EntityValidationErrors.First().ValidationErrors.First().PropertyName,
+                                            e.EntityValidationErrors.First().ValidationErrors.First().ErrorMessage));
+                                errors.Add(sb.ToString());
+                                sb.Clear();
+                                continue;
+                            }
                             catch (Exception e)
                             {
-                                errors.Add(string.Format("Could not add record: [{0}]: {1}", index, e.Message));
+                                var inner = "";
+                                if (e.InnerException != null)
+                                {
+                                    inner = e.InnerException.Message;
+                                }
+                                errors.Add(string.Format("Could not add record: [{0}]: {1}\n{2}", index, e.Message, inner));
                                 continue;
                             }
                         }
                     }
-
                 }
-
+                
                 var log = new List<SightingFileError>();
-                errors.ForEach(error => log.Add(new SightingFileError { Error = error, SightingFileUpload = sightingFileUpload }));
+                errors.ForEach(error => log.Add(new SightingFileError { Error = error, SightingFileUploadId = sightingFileUpload.SightingFileUploadId }));
                 sightingFileUpload.Log = log;
-                db.SaveChanges();
+                log.ForEach(e => db.SightingFileErrors.Add(e));
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    db.Dispose();
+                    db = null;
+                    db = new ButterflyTrackingContext();
+                    errors.ForEach(error => db.SightingFileErrors.Add(
+                        new SightingFileError
+                        {
+                            Error = error + "\n " + e.Message,
+                            SightingFileUploadId = sightingFileUpload.SightingFileUploadId
+                        }));
+                    db.SaveChanges();
+                }
 
                 return RedirectToAction("Index", "SightingFileErrors", new { sightingFileUpload.SightingFileUploadId } );
             }

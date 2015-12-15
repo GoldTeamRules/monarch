@@ -1729,6 +1729,24 @@ namespace MonarchSampleData
                         conversionFromDataToString: data => data,
                         conformanceTest: stringToTest => true
                     ),
+                    new FixedWidthColumn<double>
+                    (
+                        key: "Latitude",
+                        length: 12,
+                        conversionFromStringToDataType: dataString => double.Parse(dataString),
+                        conversionFromDataToString: data => string.Format("{0:+000.0000000;-000.000000}", data),
+                        conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
+                        //nullable: false
+                    ),
+                    new FixedWidthColumn<double>
+                    (
+                        key: "Longitude",
+                        length: 12,
+                        conversionFromStringToDataType: dataString => double.Parse(dataString),
+                        conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                        conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
+                        //nullable: false
+                    ),
                     new FixedWidthColumn<string>
                     (
                         key: "StreetAddress",
@@ -1740,7 +1758,7 @@ namespace MonarchSampleData
                     new FixedWidthColumn<string>
                     (
                         key: "City",
-                        length: 35,
+                        length: 34,
                         conversionFromStringToDataType: dataString => dataString,
                         conversionFromDataToString: data => data,
                         conformanceTest: stringToTest => true
@@ -1755,8 +1773,16 @@ namespace MonarchSampleData
                     ),
                     new FixedWidthColumn<string>
                     (
+                        key: "Country",
+                        length: 30,
+                        conversionFromStringToDataType: dataString => dataString,
+                        conversionFromDataToString: data => data,
+                        conformanceTest: stringToTest => true
+                    ),
+                    new FixedWidthColumn<string>
+                    (
                         key: "PostalCode",
-                        length: 13,
+                        length: 14,
                         conversionFromStringToDataType: dataString => dataString,
                         conversionFromDataToString: data => data,
                         conformanceTest: stringToTest => true
@@ -1772,7 +1798,7 @@ namespace MonarchSampleData
                     new FixedWidthColumn<string>
                     (
                         key: "HomePhone",
-                        length: 12,
+                        length: 14,
                         conversionFromStringToDataType: dataString => dataString,
                         conversionFromDataToString: data => data,
                         conformanceTest: stringToTest => true
@@ -1780,7 +1806,7 @@ namespace MonarchSampleData
                     new FixedWidthColumn<string>
                     (
                         key: "CellPhone",
-                        length: 12,
+                        length: 14,
                         conversionFromStringToDataType: dataString => dataString,
                         conversionFromDataToString: data => data,
                         conformanceTest: stringToTest => true
@@ -1788,7 +1814,7 @@ namespace MonarchSampleData
                     new FixedWidthColumn<string>
                     (
                         key: "Organization",
-                        length: 20,
+                        length: 30,
                         conversionFromStringToDataType: dataString => dataString,
                         conversionFromDataToString: data => data,
                         conformanceTest: stringToTest => true
@@ -1821,34 +1847,34 @@ namespace MonarchSampleData
                     new FixedWidthColumn<DateTime>
                     (
                         key: "DateTime",
-                        length: 19,
+                        length: 20,
                         conversionFromStringToDataType: dataString => DateTime.Parse(dataString),
-                        conversionFromDataToString: data => data.ToString(@"yyyy-MM-dd H:mm:ss "),
+                        conversionFromDataToString: data => data.ToString(@"yyyy-MM-dd H:mm:ss"),
                         conformanceTest: stringToTest => DateTime.TryParse(stringToTest, out dummyDate)
                         //nullable: false
                     ),
                     new FixedWidthColumn<double>
                     (
                         key: "Latitude",
-                        length: 11,
+                        length: 12,
                         conversionFromStringToDataType: dataString => double.Parse(dataString),
                         conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
-                        conformanceTest: stringToTest => double.TryParse(digitsOnly.Replace(stringToTest, ""), out dummyDouble)
+                        conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
                         //nullable: false
                     ),
                     new FixedWidthColumn<double>
                     (
                         key: "Longitude",
-                        length: 11,
+                        length: 12,
                         conversionFromStringToDataType: dataString => double.Parse(dataString),
                         conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
-                        conformanceTest: stringToTest => double.TryParse(digitsOnly.Replace(stringToTest, ""), out dummyDouble)
+                        conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
                         //nullable: false
                     ),
                     new FixedWidthColumn<string>
                     (
                         key: "City",
-                        length: 35,
+                        length: 34,
                         conversionFromStringToDataType: dataString => dataString,
                         conversionFromDataToString: data => " " + data,
                         conformanceTest: stringToTest => true
@@ -1880,7 +1906,7 @@ namespace MonarchSampleData
                     new FixedWidthColumn<int>
                     (
                         key: "Tag",
-                        length: 11,
+                        length: 10,
                         conversionFromStringToDataType: dataString => int.Parse(dataString),
                         conversionFromDataToString: data => data.ToString(),
                         conformanceTest: stringToTest => int.TryParse(stringToTest, out dummyInt)
@@ -1922,6 +1948,7 @@ namespace MonarchSampleData
             usersFile.FooterLead = "T";
             usersFile.Write();
             sightingsFile.HeaderLead = "HD";
+            sightingsFile.FooterLead = "TR";
             sightingsFile.Write();
 
         }

@@ -55,7 +55,7 @@ namespace Monarch.Controllers
             if (ModelState.IsValid)
             {
                 
-                var testvar = db.GetReporterIdFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                var testvar = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
                 reporterSighting.Reporter = testvar;
                 reporterSighting.ReporterId = testvar.ReporterId;
                 db.ReporterSightings.Add(reporterSighting);

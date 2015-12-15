@@ -34,12 +34,12 @@ namespace Monarch.Models.ButterflyTrackingContext
             //modelBuilder.Entity<SightingFileUpload>().HasMany(i => i.Log).;
         }
 
-        public Reporter GetReporterIdFromUserId(string userId, string userName)
+        public Reporter GetReporterFromUserId(string userId, string userName)
         {
-            return GetReporterIdFromUserId(new Guid(userId), userName);
+            return GetReporterFromUserId(new Guid(userId), userName);
         }
 
-        public Reporter GetReporterIdFromUserId(Guid userId, string userName)
+        public Reporter GetReporterFromUserId(Guid userId, string userName)
         {
             var reporterQueryByUserId = from r in Reporters
                            where r.UserId == userId
