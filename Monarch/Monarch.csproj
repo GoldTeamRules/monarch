@@ -185,6 +185,7 @@
     <Compile Include="Controllers\OrganizationsController.cs" />
     <Compile Include="Controllers\ReportersController.cs" />
     <Compile Include="Controllers\ReporterSightingsController.cs" />
+    <Compile Include="Controllers\SightingFileErrorsController.cs" />
     <Compile Include="Controllers\SightingFileUploadsController.cs" />
     <Compile Include="Controllers\UserFileUploadsController.cs" />
     <Compile Include="Global.asax.cs">
@@ -200,6 +201,7 @@
     <Compile Include="Models\ButterflyTrackingContext\Organization.cs" />
     <Compile Include="Models\ButterflyTrackingContext\Reporter.cs" />
     <Compile Include="Models\ButterflyTrackingContext\ReporterDetail.cs" />
+    <Compile Include="Models\ButterflyTrackingContext\SightingFileError.cs" />
     <Compile Include="Models\ButterflyTrackingContext\SightingFileUpload.cs" />
     <Compile Include="Models\ButterflyTrackingContext\UserFileUpload.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -308,6 +310,12 @@
     <Content Include="Views\Butterflies\Index.cshtml" />
     <Content Include="Views\Reporters\EditMe.cshtml" />
     <Content Include="Views\Reporters\Me.cshtml" />
+    <Content Include="Views\SightingFileUploads\Log.cshtml" />
+    <Content Include="Views\SightingFileErrors\Create.cshtml" />
+    <Content Include="Views\SightingFileErrors\Delete.cshtml" />
+    <Content Include="Views\SightingFileErrors\Details.cshtml" />
+    <Content Include="Views\SightingFileErrors\Edit.cshtml" />
+    <Content Include="Views\SightingFileErrors\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

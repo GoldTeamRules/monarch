@@ -28,6 +28,18 @@
 
     </dl>
 </div>
+
+@if (Model.Log != null)
+{
+    <table>
+        @foreach(var errorString in Model.Log)
+        {
+            <tr><td>@errorString.Error</td></tr>
+        }
+    </table>
+}
+
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.SightingFileUploadId }) |
     @Html.ActionLink("Back to List", "Index")

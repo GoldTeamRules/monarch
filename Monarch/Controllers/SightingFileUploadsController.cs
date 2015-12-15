@@ -18,7 +18,6 @@ namespace Monarch.Controllers
     public class SightingFileUploadsController : Controller
     {
         private ButterflyTrackingContext db = new ButterflyTrackingContext();
-        private List<String> log;
 
         // GET: SightingFileUploads
         public ActionResult Index()
@@ -41,11 +40,22 @@ namespace Monarch.Controllers
             return View(sightingFileUpload);
         }
 
+        public ActionResult Log(int? id)
+        {
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            SightingFileUpload sightingFileUpload = db.SightingFileUploads.Find(id);
+            if (sightingFileUpload == null)
+            {
+                return HttpNotFound();
+            }
+            return View(sightingFileUpload);
+        }
+
         // GET: SightingFileUploads/Create
         public ActionResult Create()
         {
-            if (ViewBag.Log == null)
-                ViewBag.Log = new List<string>();
             return View();
         }
 
@@ -56,9 +66,8 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "SightingFileUploadId")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
         {
+            var errors = new List<string>();
 
-            if (log == null)
-                log = new List<string>();
             if (ModelState.IsValid)
             {
                 if (upload != null && upload.ContentLength > 0)
@@ -68,7 +77,7 @@ namespace Monarch.Controllers
                     sightingFileUpload.Reporter = reporterAttachedToUser;
                     sightingFileUpload.ReporterId = reporterAttachedToUser.ReporterId;
                     // set the date of the sighting file upload to TODAY
-                    sightingFileUpload.DateTime = DateTime.Today;
+                    sightingFileUpload.DateTime = DateTime.Now;
                     db.SightingFileUploads.Add(sightingFileUpload);
                     db.SaveChanges();
 
@@ -175,7 +184,7 @@ namespace Monarch.Controllers
 
                         if (!sightingsFile.TryRead(reader, out errorMessage))
                         {
-                            log.Add("Could not parse sightings file. Check the file and try again.\n" + errorMessage);
+                            errors.Add("Could not parse sightings file. Check the file and try again.\n" + errorMessage);
                             throw new NotImplementedException("Couldn't read the batch file. TODO: add some way to handle this");
                         }
 
@@ -190,7 +199,7 @@ namespace Monarch.Controllers
                                 //  SIGHTINGS BATCH FILE TRANSFORMATION
                                 if (record.DateTime > sightingsFile.Header.DateTime)
                                 {
-                                    log.Add(string.Format(
+                                    errors.Add(string.Format(
                                         "Could not add record: [{0}] because the record date is greater than the date in the header",
                                         index));
                                     continue; // go on to the next record
@@ -205,7 +214,7 @@ namespace Monarch.Controllers
                                             record.UserNameOrReporterId.ToString(), out message);
                                         if (reporter == null)
                                         {
-                                            log.Add(string.Format("Could not add record: [{0}] {1}", index, message));
+                                            errors.Add(string.Format("Could not add record: [{0}] {1}", index, message));
                                             continue; // go on to the next record
                                         }
                                         // master location then create new human sighting
@@ -215,7 +224,7 @@ namespace Monarch.Controllers
                                             record.City, record.State, record.Country,
                                             out message))
                                         {
-                                            log.Add(string.Format("Could not add record: [{0}] {1}", index, message));
+                                            errors.Add(string.Format("Could not add record: [{0}] {1}", index, message));
                                             continue; // go on to the next record
                                         }
 
@@ -243,14 +252,14 @@ namespace Monarch.Controllers
                                         var butterfly = findAndVerifyButterflyForMonitors(record.Tag, record.Species, out message);
                                         if (butterfly == null)
                                         {
-                                            log.Add(string.Format("Could not add record [{0}] {1}", index, message));
+                                            errors.Add(string.Format("Could not add record [{0}] {1}", index, message));
                                             continue;
                                         }
 
                                         var monitor = findAndVerifyMonitor(record.UserNameOrReporterId, record.Latitude, record.Longitude, out message);
                                         if (monitor == null)
                                         {
-                                            log.Add(string.Format("Could not add record [(0)] {1}", index, message));
+                                            errors.Add(string.Format("Could not add record [(0)] {1}", index, message));
                                             continue;
                                         }
 
@@ -271,7 +280,7 @@ namespace Monarch.Controllers
                                     var butterfly = db.Butterflies.Find(record.Tag); // this returns null if it can't find the element
                                     if (butterfly != null) // so if this value isn't null then we found a tag
                                     {
-                                        log.Add(
+                                        errors.Add(
                                             string.Format("Could not add record: [{0}] because the tag \'{1}\' already exists.",
                                                 index, record.Tag));
                                         continue;
@@ -282,7 +291,7 @@ namespace Monarch.Controllers
                                     var tagger = findReporterFromIdOrUserName(record.UserNameOrReporterId, out message);
                                     if (tagger == null)
                                     {
-                                        log.Add(
+                                        errors.Add(
                                             string.Format("Could not add record: [{0}] could not find tagger: {1}",
                                                 index, message));
                                         continue;
@@ -294,7 +303,7 @@ namespace Monarch.Controllers
                                         record.City, record.State, record.Country,
                                         out message))
                                     {
-                                        log.Add(string.Format("Could not add record: [{0}]. "
+                                        errors.Add(string.Format("Could not add record: [{0}]. "
                                             + "Could not verify location: {1}", index, message));
                                         continue;
                                     }
@@ -318,7 +327,7 @@ namespace Monarch.Controllers
                             }
                             catch (Exception e)
                             {
-                                log.Add(string.Format("Could not add record: [{0}]: {1}", index, e.Message));
+                                errors.Add(string.Format("Could not add record: [{0}]: {1}", index, e.Message));
                                 continue;
                             }
                         }
@@ -326,10 +335,15 @@ namespace Monarch.Controllers
 
                 }
 
-                ViewBag.Log = log;
+                var log = new List<SightingFileError>();
+                errors.ForEach(error => log.Add(new SightingFileError { Error = error, SightingFileUpload = sightingFileUpload }));
+                sightingFileUpload.Log = log;
+                db.SaveChanges();
 
-                var fileContents = log.ToString();
-                return RedirectToAction("Index");
+                
+
+                return RedirectToAction("Index", "SightingFileErrors", new { sightingFileUpload.SightingFileUploadId } );
+                //return RedirectToAction("Index");
             }
 
             return View(sightingFileUpload);

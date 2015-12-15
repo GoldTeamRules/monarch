@@ -21,6 +21,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         public DbSet<MonitorSighting> MonitorSightings { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Reporter> Reporters { get; set; }
+        public DbSet<SightingFileError> SightingFileError { get; set; }
         //public DbSet<ReporterDetail> ReporterDetails { get; set; }
 
 
@@ -29,6 +30,7 @@ namespace Monarch.Models.ButterflyTrackingContext
             base.OnModelCreating(modelBuilder);
             //modelBuilder.Entity<SightingFileUpload>().HasRequired(i => i.Reporter).WithOptional().WillCascadeOnDelete(false);
             modelBuilder.Entity<Reporter>().HasOptional(i => i.UserFileUpload).WithOptionalPrincipal();
+            //modelBuilder.Entity<SightingFileUpload>().HasMany(i => i.Log).;
         }
 
         public Reporter GetReporterIdFromUserId(string userId, string userName)

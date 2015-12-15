@@ -20,6 +20,8 @@ namespace Monarch.Models.ButterflyTrackingContext
         // the reporter who uploaded the file
         public virtual Reporter Reporter { get; set; }
 
+        public List<SightingFileError> Log { get; set; }
+
         public override bool Equals(object obj)
         {
             // If parameter is null return false.
