@@ -230,8 +230,8 @@ namespace Monarch.Controllers
                                         if (organization == null)
                                         {
                                             errors.Add(string.Format(
-                                                "Could not add record: [{0}] because the record lists and Organization UniqueName: \'{1}\' that does exist.",
-                                                record.Organization));
+                                                "Could not add record: [{0}] because the record has an organization with UniqueName: \'{1}\' that does not exist. Please create this organization and try again.",
+                                                index, record.Organization));
                                             continue;
                                         }
                                     }
@@ -278,7 +278,7 @@ namespace Monarch.Controllers
                                         if (organization == null)
                                         {
                                             errors.Add(string.Format(
-                                                "Could not add record: [{0}] because the record lists and Organization UniqueName: \'{1}\' that does exist.",
+                                                "Could not add record: [{0}] because the record has an organization with UniqueName: \'{1}\' that does not exist. Please create this organization and try again.",
                                                 index, record.Organization));
                                             continue;
                                         }

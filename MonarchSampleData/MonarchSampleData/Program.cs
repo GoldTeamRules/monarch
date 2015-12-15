@@ -1670,7 +1670,7 @@ namespace MonarchSampleData
                             StateProvince = state,
                             Country = country,
                             Latitude = data.Latitude,
-                            Longitude = data.Latitude,
+                            Longitude = data.Longitude,
                             DateTime = data.DateTime,
                             Species = "Monarch"
                         }
@@ -1734,7 +1734,7 @@ namespace MonarchSampleData
                         key: "Latitude",
                         length: 12,
                         conversionFromStringToDataType: dataString => double.Parse(dataString),
-                        conversionFromDataToString: data => string.Format("{0:+000.0000000;-000.000000}", data),
+                        conversionFromDataToString: data => string.Format("{0:+0.0000000;-#.0000000}", data),
                         conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
                         //nullable: false
                     ),
@@ -1743,7 +1743,7 @@ namespace MonarchSampleData
                         key: "Longitude",
                         length: 12,
                         conversionFromStringToDataType: dataString => double.Parse(dataString),
-                        conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                        conversionFromDataToString: data => string.Format("{0:+0.0000000;-#.0000000}", data),
                         conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
                         //nullable: false
                     ),
@@ -1858,7 +1858,7 @@ namespace MonarchSampleData
                         key: "Latitude",
                         length: 12,
                         conversionFromStringToDataType: dataString => double.Parse(dataString),
-                        conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                        conversionFromDataToString: data => string.Format("{0:+0.0000000;-#.0000000}", data),
                         conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
                         //nullable: false
                     ),
@@ -1867,7 +1867,7 @@ namespace MonarchSampleData
                         key: "Longitude",
                         length: 12,
                         conversionFromStringToDataType: dataString => double.Parse(dataString),
-                        conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                        conversionFromDataToString: data => string.Format("{0:+0.0000000;-#.0000000}", data),
                         conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
                         //nullable: false
                     ),
@@ -1913,6 +1913,7 @@ namespace MonarchSampleData
                     ),
                 }
             );
+
 
             foreach (var r in reporters)
             {
