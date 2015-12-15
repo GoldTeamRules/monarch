@@ -266,7 +266,7 @@ namespace Monarch.Controllers
                                     {
                                         errors.Add(string.Format(
                                             "Could not add record: [{0}] because username \'{1}\' already exists.",
-                                            record.UserName));
+                                            index, record.UserName));
                                     }
 
                                     Organization organization = null;
