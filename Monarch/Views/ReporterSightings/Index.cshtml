@@ -4,11 +4,13 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
-
+<h2>Sightings</h2>
+<p>
+    <a class="btn btn-primary btn-lg" href="@Url.Action("Create")" role="button">Create a new sighting...</a>
+</p>
 <script type='text/javascript' src='https://10ay.online.tableau.com/javascripts/api/viz_v1.js'></script>
 <div class='tableauPlaceholder' style='width: 100%; min-height: 80vh; height: 100%;'>
-    <object class='tableauViz' style='display:none;'>
+    <object class='tableauViz' width="1170" height="700" style='display:none;'>
         <param name='host_url' value='https%3A%2F%2F10ay.online.tableau.com%2F' />
         <param name='site_root' value='&#47;t&#47;butterflytracking' />
         <param name='name' value='Sightings&#47;Sightings' />
@@ -21,9 +23,7 @@
         <param name='filter' value='%3AshowShareOptions=true' />
     </object>
 </div>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+
 <table class="table">
     <tr>
         <th>

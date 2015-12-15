@@ -240,14 +240,23 @@ namespace Monarch.Controllers
                                         // check the butterfly id
                                         string message;
                                         var butterfly = findAndVerifyButterflyForMonitors(record.Tag, record.Species, out message);
-                                        if (butterfly == null)
+                                        if (butterfly == null) // couldn't find the butterfly id
                                         {
                                             errors.Add(string.Format("Could not add record [{0}] {1}", index, message));
                                             continue;
                                         }
 
-                                        var monitor = findAndVerifyMonitor(record.UserNameOrReporterId, record.Latitude, record.Longitude, out message);
-                                        if (monitor == null)
+                                        // verify the location
+                                        double lat = -1;
+                                        double lng = -1;
+                                        if (record.Latitude != null && record.Longitude != null)
+                                        {
+                                            lat = record.Latitude;
+                                            lng = record.Longitude;
+                                        }
+
+                                        var monitor = findAndVerifyMonitor(record.UserNameOrReporterId, lat, lng, out message);
+                                        if (monitor == null) // couldn't find or verify the monitor
                                         {
                                             errors.Add(string.Format("Could not add record [{0}] {1}", index, message));
                                             continue;
@@ -422,6 +431,11 @@ namespace Monarch.Controllers
             }
             else
             {
+                if (latitude == -1 || longitude == -1)
+                {
+                    message = "Could get read location of sighting from this monitor \'{0}\'. Are you missing one coordinate? The latitude and longtidue are not required for sightings by monitors.";
+                    return null;
+                }
                 message = string.Format("Location of monitor \'{0}\' from database is: ({1},{2})"
                     + " and location or record: ({3},{4})", monitor.UniqueName, monitor.Latitude, monitor.Longitude, latitude, longitude);
                 return null;
