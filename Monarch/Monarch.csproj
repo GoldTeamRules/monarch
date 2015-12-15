@@ -311,10 +311,6 @@
     <Content Include="Views\Reporters\EditMe.cshtml" />
     <Content Include="Views\Reporters\Me.cshtml" />
     <Content Include="Views\SightingFileUploads\Log.cshtml" />
-    <Content Include="Views\SightingFileErrors\Create.cshtml" />
-    <Content Include="Views\SightingFileErrors\Delete.cshtml" />
-    <Content Include="Views\SightingFileErrors\Details.cshtml" />
-    <Content Include="Views\SightingFileErrors\Edit.cshtml" />
     <Content Include="Views\SightingFileErrors\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

@@ -184,10 +184,17 @@ namespace Monarch.Controllers
 
                         if (!sightingsFile.TryRead(reader, out errorMessage))
                         {
-                            errors.Add("Could not parse sightings file. Check the file and try again.\n" + errorMessage);
-                            throw new NotImplementedException("Couldn't read the batch file. TODO: add some way to handle this");
-                        }
+                            var error = new SightingFileError
+                            {
+                                Error = "Could not parse sightings file. Check the file and try again.\n" + errorMessage,
+                                SightingFileUpload = sightingFileUpload
+                            };
+                            sightingFileUpload.Log = new List<SightingFileError> { error };
+                            db.SaveChanges();
 
+                            return RedirectToAction("Index", "SightingFileErrors", new { sightingFileUpload.SightingFileUploadId });
+
+                        }
                         var locationMaster = new LocationMaster();
 
                         int index = -1;
@@ -259,7 +266,7 @@ namespace Monarch.Controllers
                                         var monitor = findAndVerifyMonitor(record.UserNameOrReporterId, record.Latitude, record.Longitude, out message);
                                         if (monitor == null)
                                         {
-                                            errors.Add(string.Format("Could not add record [(0)] {1}", index, message));
+                                            errors.Add(string.Format("Could not add record [{0}] {1}", index, message));
                                             continue;
                                         }
 
@@ -340,8 +347,6 @@ namespace Monarch.Controllers
                 sightingFileUpload.Log = log;
                 db.SaveChanges();
 
-                
-
                 return RedirectToAction("Index", "SightingFileErrors", new { sightingFileUpload.SightingFileUploadId } );
                 //return RedirectToAction("Index");
             }
@@ -359,7 +364,7 @@ namespace Monarch.Controllers
                 monitor = db.Monitors.Find(monitorId);
                 if (monitor == null) // if we didn't find a monitor
                 {
-                    message = string.Format("No monitor was found with Id: \'{1}\'", monitorId);
+                    message = string.Format("No monitor was found with Id: \'{0}\'", monitorId);
                     return null;
                 }
             }
@@ -370,12 +375,12 @@ namespace Monarch.Controllers
                                 select m;
                 if (monitors.Count() <= 0) // case where no monitors are returned
                 {
-                    message = string.Format("No monitor was found with UserName: \'{1}\'", uniqueNameOrMonitorId);
+                    message = string.Format("No monitor was found with UserName: \'{0}\'", uniqueNameOrMonitorId);
                     return null;
                 }
                 else if (monitors.Count() > 1) // case where there's more than one 
                 {
-                    message = string.Format("ERROR: two reporters exist with UserName: \'{1}\'"
+                    message = string.Format("ERROR: two reporters exist with UserName: \'{0}\'"
                         + "Contact your database administrator", uniqueNameOrMonitorId);
                     return null;
                 }
@@ -384,7 +389,7 @@ namespace Monarch.Controllers
                     monitor = monitors.First();
                     if (monitor == null)
                     {
-                        message = string.Format("Monitor with UniqueName: \'{1}\' returned a null value.",
+                        message = string.Format("Monitor with UniqueName: \'{0}\' returned a null value.",
                           uniqueNameOrMonitorId);
                         return null;
                     }
@@ -417,8 +422,8 @@ namespace Monarch.Controllers
             }
             if (butterfly.Species.ToLower() != species.ToLower())
             {
-                message = string.Format("The tag returned a butterfly with the Species \'{1}\' "
-                    + "and the record contains the species {2}", butterfly.Species, species);
+                message = string.Format("The tag returned a butterfly with the Species \'{0}\' "
+                    + "and the record contains the species {1}", butterfly.Species, species);
                 return null; // throw out record and move on
             }
             message = "";
@@ -435,7 +440,7 @@ namespace Monarch.Controllers
                 reporter = db.Reporters.Find(reporterId);
                 if (reporter == null) // if we didn't find a reporter
                 {
-                    message = string.Format("No reporter was found with Id: \'{1}\'", reporterId);
+                    message = string.Format("No reporter was found with Id: \'{0}\'", reporterId);
                     return null;
                 }
             }
@@ -446,12 +451,12 @@ namespace Monarch.Controllers
                                 select r;
                 if (reporters.Count() <= 0) // case where no reporters are returned
                 {
-                    message = string.Format("No reporter was found with UserName: \'{1}\'", userNameOrReporterId);
+                    message = string.Format("No reporter was found with UserName: \'{0}\'", userNameOrReporterId);
                     return null;
                 }
                 else if (reporters.Count() > 1) // case where there's more than one 
                 {
-                    message = string.Format("ERROR: two reporters exist with UserName: \'{1}\'"
+                    message = string.Format("ERROR: two reporters exist with UserName: \'{0}\'"
                         + "Contact your database administrator", userNameOrReporterId);
                     return null;
                 }
@@ -460,7 +465,7 @@ namespace Monarch.Controllers
                     reporter = reporters.First();
                     if (reporter == null)
                     {
-                        message = string.Format("Reporter with UserName: \'{1}\' returned a null value.",
+                        message = string.Format("Reporter with UserName: \'{0}\' returned a null value.",
                           userNameOrReporterId);
                         return null;
                     }
