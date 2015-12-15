@@ -12,16 +12,19 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.UserFileUpload.UserFileUploadId)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.UserName)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.UserFileUploadId)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.UserId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrganizationId)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.ProfilePictureUrl)
@@ -50,14 +53,17 @@
         <th>
             @Html.DisplayNameFor(model => model.CellPhone)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReporterType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsConfigured)
+        </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.UserFileUpload.UserFileUploadId)
-        </td>
         <td>
             @Html.DisplayFor(modelItem => item.Name)
         </td>
@@ -65,7 +71,13 @@
             @Html.DisplayFor(modelItem => item.UserName)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.UserFileUploadId)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.UserId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OrganizationId)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.ProfilePictureUrl)
@@ -93,6 +105,12 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.CellPhone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReporterType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsConfigured)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.ReporterId }) |

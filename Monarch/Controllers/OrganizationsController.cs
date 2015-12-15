@@ -7,8 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
-using System.Web.Security;
 using Microsoft.AspNet.Identity;
+using System.Data.Entity.Validation;
+using System.Text;
 
 namespace Monarch.Controllers
 {
@@ -37,6 +38,38 @@ namespace Monarch.Controllers
             return View(organization);
         }
 
+        // this would be to join an organization
+        // POST: Organizations/Details/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Details(Organization organization)
+        {
+
+            Reporter reporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+            if (organization != null)
+            {
+                try
+                {
+
+                
+                //reporter.Organization = organization;
+                reporter.OrganizationId = organization.OrganizationId;
+                db.Entry(reporter).State = System.Data.Entity.EntityState.Modified;
+                db.Entry(organization).State = System.Data.Entity.EntityState.Unchanged;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+            
+            
+            
+            return View(organization);
+        }
+
         // GET: Organizations/Create
         public ActionResult Create()
         {
@@ -48,17 +81,24 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "OrganizationId,UniqueName,DisplayName,Description,WebsiteUrl,LogoUrl")] Organization organization)
+        public ActionResult Create([Bind(Include = "OrganizationId,OwnerId,UniqueName,DisplayName,Description,WebsiteUrl,LogoUrl")] Organization organization)
         {
             if (ModelState.IsValid)
             {
-                string test = User.Identity.GetUserId();
-                //organization.OwnerId = Reporter.GetReporterIdForCurrentUser();
-                db.Organizations.Add(organization);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    Reporter ownwer = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                    organization.Owner = ownwer;
+                    organization.OwnerId = ownwer.ReporterId;
+                    db.Organizations.Add(organization);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    return View(organization);
+                }
             }
-
             return View(organization);
         }
 
@@ -69,6 +109,7 @@ namespace Monarch.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Organization organization = db.Organizations.Find(id);
             if (organization == null)
             {
@@ -82,13 +123,23 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "OrganizationId,OwnerId,UniqueName,DisplayName,Description,WebsiteUrl,LogoUrl")] Organization organization)
+        public ActionResult Edit([Bind(Include = "OrganizationId,UniqueName,DisplayName,Description,WebsiteUrl,LogoUrl")] Organization organization)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(organization).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    Reporter ownwer = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                    organization.Owner = ownwer;
+                    organization.OwnerId = ownwer.ReporterId;
+                    db.Entry(organization).State = System.Data.Entity.EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch(Exception e)
+                {
+                    return View(organization);
+                }
             }
             return View(organization);
         }

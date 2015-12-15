@@ -289,18 +289,9 @@ namespace Monarch.Controllers
                                         UserName = record.UserName,
                                         CellPhone = record.CellPhone,
                                         HomePhone = record.HomePhone,
-                                        StreetAddress = record.StreetAddress
+                                        StreetAddress = record.StreetAddress,
+                                        Organization = organization
                                     };
-
-                                    var reporterDetail = new ReporterDetail
-                                    {
-                                        Organization = organization,
-                                        Reporter = reporterToBeAdded
-                                    };
-
-                                    if (reporterToBeAdded.Details == null)
-                                        reporterToBeAdded.Details = new List<ReporterDetail>();
-                                    reporterToBeAdded.Details.Add(reporterDetail);
 
                                     db.Reporters.Add(reporterToBeAdded);
                                     db.SaveChanges();

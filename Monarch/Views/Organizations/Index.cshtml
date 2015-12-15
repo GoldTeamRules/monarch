@@ -12,9 +12,6 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.OwnerId)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.UniqueName)
         </th>
         <th>
@@ -23,20 +20,12 @@
         <th>
             @Html.DisplayNameFor(model => model.Description)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.WebsiteUrl)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LogoUrl)
-        </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.OwnerId)
-        </td>
+        
         <td>
             @Html.DisplayFor(modelItem => item.UniqueName)
         </td>
@@ -47,12 +36,7 @@
             @Html.DisplayFor(modelItem => item.Description)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.WebsiteUrl)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LogoUrl)
-        </td>
-        <td>
+            <a href="@Url.Action("Details", "Reporters" )/@Html.DisplayFor(modelItem => item.OwnerId)">Owner</a> |
             @Html.ActionLink("Edit", "Edit", new { id=item.OrganizationId }) |
             @Html.ActionLink("Details", "Details", new { id=item.OrganizationId }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.OrganizationId })

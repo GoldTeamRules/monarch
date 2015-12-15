@@ -11,14 +11,6 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.UserFileUpload.UserFileUploadId)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.UserFileUpload.UserFileUploadId)
-        </dd>
-
-        <dt>
             @Html.DisplayNameFor(model => model.Name)
         </dt>
 
@@ -35,11 +27,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.UserId)
+            @Html.DisplayNameFor(model => model.OrganizationId)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.UserId)
+            @Html.DisplayFor(model => model.OrganizationId)
         </dd>
 
         <dt>
@@ -114,9 +106,17 @@
             @Html.DisplayFor(model => model.CellPhone)
         </dd>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.ReporterType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReporterType)
+        </dd>
+
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ReporterId }) |
+    @Html.ActionLink("Edit", "EditMe") |
     @Html.ActionLink("Back to List", "Index")
 </p>

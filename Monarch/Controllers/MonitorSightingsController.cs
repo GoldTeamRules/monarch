@@ -54,9 +54,16 @@ namespace Monarch.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.MonitorSightings.Add(monitorSighting);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.MonitorSightings.Add(monitorSighting);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    return View(monitorSighting);
+                }
             }
 
             ViewBag.ButterflyId = new SelectList(db.Butterflies, "ButterflyId", "Name", monitorSighting.ButterflyId);

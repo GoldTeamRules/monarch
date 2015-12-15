@@ -60,6 +60,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -202,7 +203,6 @@
     <Compile Include="Models\ButterflyTrackingContext\MonitorSighting.cs" />
     <Compile Include="Models\ButterflyTrackingContext\Organization.cs" />
     <Compile Include="Models\ButterflyTrackingContext\Reporter.cs" />
-    <Compile Include="Models\ButterflyTrackingContext\ReporterDetail.cs" />
     <Compile Include="Models\ButterflyTrackingContext\SightingFileError.cs" />
     <Compile Include="Models\ButterflyTrackingContext\SightingFileUpload.cs" />
     <Compile Include="Models\ButterflyTrackingContext\UserFileError.cs" />
@@ -281,11 +281,6 @@
     <Content Include="Views\Monitors\Details.cshtml" />
     <Content Include="Views\Monitors\Edit.cshtml" />
     <Content Include="Views\Monitors\Index.cshtml" />
-    <Content Include="Views\Organizations\Create.cshtml" />
-    <Content Include="Views\Organizations\Delete.cshtml" />
-    <Content Include="Views\Organizations\Details.cshtml" />
-    <Content Include="Views\Organizations\Edit.cshtml" />
-    <Content Include="Views\Organizations\Index.cshtml" />
     <Content Include="Views\SightingFileUploads\Index.cshtml" />
     <Content Include="Views\UserFileUploads\Index.cshtml" />
     <Content Include="Views\ReporterSightings\Create.cshtml" />
@@ -303,11 +298,16 @@
     <Content Include="Views\Butterflies\Details.cshtml" />
     <Content Include="Views\Butterflies\Edit.cshtml" />
     <Content Include="Views\Butterflies\Index.cshtml" />
-    <Content Include="Views\Reporters\EditMe.cshtml" />
     <Content Include="Views\Reporters\Me.cshtml" />
     <Content Include="Views\SightingFileErrors\Index.cshtml" />
     <Content Include="Views\UploadFile\Index.cshtml" />
     <Content Include="Views\UserFileErrors\Index.cshtml" />
+    <Content Include="Views\Organizations\Create.cshtml" />
+    <Content Include="Views\Organizations\Delete.cshtml" />
+    <Content Include="Views\Organizations\Details.cshtml" />
+    <Content Include="Views\Organizations\Edit.cshtml" />
+    <Content Include="Views\Organizations\Index.cshtml" />
+    <Content Include="Views\Reporters\EditMe.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

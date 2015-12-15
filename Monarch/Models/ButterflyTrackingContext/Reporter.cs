@@ -15,10 +15,14 @@ namespace Monarch.Models.ButterflyTrackingContext
         public int ReporterId { get; set; }
         public string Name { get; set; }
         [Required]
+        [Index(IsUnique = true), StringLength(500)]
         public string UserName { get; set; }
 
         public int? UserFileUploadId { get; set; }
         public Guid? UserId { get; set; }
+
+        public int? OrganizationId { get; set; }
+
         public string ProfilePictureUrl { get; set; }
         public string Bio { get; set; }
         public string StreetAddress { get; set; }
@@ -33,7 +37,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         [Required]
         public bool IsConfigured { get; set; }
 
-        public virtual List<ReporterDetail> Details { get; set; }
+        public virtual Organization Organization { get; set; }
         public virtual UserFileUpload UserFileUpload { get;set; }
 
         public override bool Equals(object obj)

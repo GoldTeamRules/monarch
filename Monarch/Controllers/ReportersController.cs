@@ -18,8 +18,7 @@ namespace Monarch.Controllers
         // GET: Reporters
         public ActionResult Index()
         {
-            var reporters = db.Reporters.Include(r => r.UserFileUpload);
-            return View(reporters.ToList());
+            return View(db.Reporters.ToList());
         }
 
         // GET: Reporters/Details/5
@@ -30,6 +29,8 @@ namespace Monarch.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Reporter reporter = db.Reporters.Find(id);
+            
+
             if (reporter == null)
             {
                 return HttpNotFound();
@@ -40,18 +41,34 @@ namespace Monarch.Controllers
         // GET: Reporters/Details/5
         public ActionResult Me()
         {
-            Reporter reporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
-            if (reporter == null)
-            {
-                return HttpNotFound();
+            try {
+                Reporter reporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                if (reporter.Organization != null)
+                {
+                    if (string.IsNullOrEmpty(reporter.Organization.DisplayName))
+                        ViewBag.OrganizationName = reporter.Organization.DisplayName;
+                    else
+                        ViewBag.OrganizationName = reporter.Organization.UniqueName;
+
+                    ViewBag.OrganizationId = reporter.OrganizationId;
+                }
+
+                if (reporter == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(reporter);
             }
-            return View(reporter);
+            catch (Exception e)
+            {
+                // i just don't want to fail...
+                return View();
+            }
         }
 
         // GET: Reporters/Create
         public ActionResult Create()
         {
-            ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId");
             return View();
         }
 
@@ -60,7 +77,7 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ReporterId,Name,UserName,UserFileUploadId,ReporterId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone")] Reporter reporter)
+        public ActionResult Create([Bind(Include = "ReporterId,Name,UserName,UserFileUploadId,UserId,OrganizationId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone,ReporterType,IsConfigured")] Reporter reporter)
         {
             if (ModelState.IsValid)
             {
@@ -69,7 +86,6 @@ namespace Monarch.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId", reporter.UserFileUploadId);
             return View(reporter);
         }
 
@@ -85,36 +101,18 @@ namespace Monarch.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId", reporter.UserFileUploadId);
             return View(reporter);
         }
 
-        // GET: Reporters/EditMe
+        // GET: Reporters/Edit/5
         public ActionResult EditMe()
         {
+            
             Reporter reporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
             if (reporter == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return HttpNotFound();
             }
-            return View(reporter);
-        }
-
-        // POST: Reporters/EditMe
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditMe([Bind(Include = "ReporterId,Name,UserName,UserFileUploadId,ReporterId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone")] Reporter reporter)
-        {
-            reporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
-            if (ModelState.IsValid)
-            {
-                db.Entry(reporter).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Me");
-            }
-            //ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId", reporter.UserFileUploadId);
             return View(reporter);
         }
 
@@ -123,15 +121,53 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ReporterId,Name,UserName,UserFileUploadId,ReporterId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone")] Reporter reporter)
+        public ActionResult EditMe([Bind(Include = "ReporterId,Name,OrganizationId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone")] Reporter reporter)
+        {
+            var currentReporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+            currentReporter.Name = reporter.Name;
+            currentReporter.Bio = reporter.Bio;
+            currentReporter.CellPhone = reporter.CellPhone;
+            currentReporter.Country = reporter.Country;
+            currentReporter.City = reporter.City;
+            currentReporter.HomePhone = reporter.HomePhone;
+            currentReporter.IsConfigured = true;
+            currentReporter.PostalCode = reporter.PostalCode;
+            currentReporter.StateProvince = reporter.StateProvince;
+            currentReporter.StreetAddress = reporter.StreetAddress;
+            currentReporter.ProfilePictureUrl = reporter.ProfilePictureUrl;
+            try
+            {
+                db.Entry(currentReporter).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                // oh well
+            }
+            return RedirectToAction("Me");
+            //return View(reporter);
+        }
+
+        // POST: Reporters/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "ReporterId,Name,UserName,UserFileUploadId,UserId,OrganizationId,ProfilePictureUrl,Bio,StreetAddress,City,StateProvince,Country,PostalCode,HomePhone,CellPhone,ReporterType,IsConfigured")] Reporter reporter)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(reporter).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.Entry(reporter).State = System.Data.Entity.EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    return View(reporter);
+                }
             }
-            ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId", reporter.UserFileUploadId);
             return View(reporter);
         }
 
