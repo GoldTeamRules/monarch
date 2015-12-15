@@ -167,7 +167,10 @@ namespace Monarch.Controllers
                         {
                             var error = new UserFileError
                             {
-                                Error = "Could not parse users batch file. Check the file and try again.\n" + errorMessage,
+                                Error = "Could not parse sightings batch file. <b>Check the file and try again.</b>\n\n"
+                                + "<pre>"
+                                    + errorMessage + "\n"
+                                + "</pre>",
                                 UserFileUpload = userFileUpload
                             };
                             userFileUpload.Log = new List<UserFileError> { error };

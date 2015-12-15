@@ -133,13 +133,13 @@ namespace Monarch.Controllers
                                 conversionFromDataToString: data => data,
                                 conformanceTest: stringToTest => true
                             ),
-                            new FixedWidthColumn<long>
+                            new FixedWidthColumn<int>
                             (
                                 key: "Tag",
                                 length: 11,
-                                conversionFromStringToDataType: dataString => long.Parse(dataString),
+                                conversionFromStringToDataType: dataString => int.Parse(dataString),
                                 conversionFromDataToString: data => data.ToString(),
-                                conformanceTest: stringToTest => { long dummyUint; return long.TryParse(stringToTest, out dummyUint); }
+                                conformanceTest: stringToTest => { int dummyUint; return int.TryParse(stringToTest, out dummyUint); }
                             )
                         }
                     );
@@ -152,7 +152,10 @@ namespace Monarch.Controllers
                         {
                             var error = new SightingFileError
                             {
-                                Error = "Could not parse sightings batch file. Check the file and try again.\n" + errorMessage,
+                                Error = "Could not parse sightings batch file. <b>Check the file and try again.</b>\n\n"
+                                + "<pre>"
+                                    + errorMessage + "\n"
+                                + "</pre>",
                                 SightingFileUpload = sightingFileUpload
                             };
                             sightingFileUpload.Log = new List<SightingFileError> { error };

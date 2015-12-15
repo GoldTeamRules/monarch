@@ -42,7 +42,7 @@ namespace Monarch.Models
         public bool TryMasterLocation(dynamic latitude, dynamic longitude, string city, string state, string country, out string message)
         {
             clearProperties();
-            Thread.Sleep(100);
+            Thread.Sleep(150);
             if (latitude == null || longitude == null)
             {
                 if (city == null || state == null || country == null)
