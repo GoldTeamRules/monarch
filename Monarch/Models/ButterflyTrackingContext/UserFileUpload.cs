@@ -14,6 +14,10 @@ namespace Monarch.Models.ButterflyTrackingContext
         [Required]
         public DateTime DateTime { get; set; }
 
+        public int SequenceNumber { get; set; }
+
+        public virtual List<UserFileError> Log { get; set; }
+
         // reporter entity that uploaded that users.txt batch file
         public virtual Reporter Reporter { get; set; }
 

@@ -1,39 +1,40 @@
-﻿@model IEnumerable<Monarch.Models.ButterflyTrackingContext.UserFileUpload>
+﻿@model Monarch.Models.ButterflyTrackingContext.UserFileUpload
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Create";
 }
 
-<h2>Index</h2>
+<h2>Create</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ReporterId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateTime)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReporterId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateTime)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.UserFileUploadId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.UserFileUploadId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.UserFileUploadId })
-        </td>
-    </tr>
+@using (Html.BeginForm("Index", "UserFileUploads", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>UserFileUpload</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.Label("FileUpload", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" id="FileUpload" name="upload" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Upload" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
 }
 
-</table>
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

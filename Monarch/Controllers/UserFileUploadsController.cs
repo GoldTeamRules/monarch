@@ -19,41 +19,18 @@ namespace Monarch.Controllers
     {
         private ButterflyTrackingContext db = new ButterflyTrackingContext();
 
-        // GET: UserFileUploads
         public ActionResult Index()
-        {
-            return View(db.UserFileUploads.ToList());
-        }
-
-        // GET: UserFileUploads/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserFileUpload userFileUpload = db.UserFileUploads.Find(id);
-            if (userFileUpload == null)
-            {
-                return HttpNotFound();
-            }
-            return View(userFileUpload);
-        }
-
-        // GET: UserFileUploads/Create
-        public ActionResult Create()
         {
             return View();
         }
 
-        // POST: UserFileUploads/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UserFileUploadId,ReporterId,DateTime")] UserFileUpload userFileUpload, HttpPostedFileBase upload)
+        public ActionResult Index([Bind(Include = "UserFileUploadId,ReporterId,DateTime")] UserFileUpload userFileUpload, HttpPostedFileBase upload)
         {
-            var log = new List<string>();
+            var errors = new List<string>();
             if (ModelState.IsValid)
             {
                 if (upload != null && upload.ContentLength > 0)
@@ -87,30 +64,30 @@ namespace Monarch.Controllers
                                     || stringToTest.ToUpper().Trim() == "M"
                                     || stringToTest.ToUpper().Trim() == "A"
                             ),
-                            new FixedWidthColumn<string>
+                            //new FixedWidthColumn<string>
+                            //(
+                            //    key: "Name",
+                            //    length: 34,
+                            //    conversionFromStringToDataType: dataString => dataString,
+                            //    conversionFromDataToString: data => data,
+                            //    conformanceTest: stringToTest => true
+                            //),
+                            new FixedWidthColumn<double>
                             (
-                                key: "Name",
-                                length: 36,
-                                conversionFromStringToDataType: dataString => dataString,
-                                conversionFromDataToString: data => data,
-                                conformanceTest: stringToTest => true
+                                key: "Latitude",
+                                length: 11,
+                                conversionFromStringToDataType: dataString => double.Parse(dataString),
+                                conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                                conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
                             ),
-                            //new FixedWidthColumn<double>
-                            //(
-                            //    key: "Latitude",
-                            //    length: 11,
-                            //    conversionFromStringToDataType: dataString => double.Parse(dataString),
-                            //    conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
-                            //    conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
-                            //),
-                            //new FixedWidthColumn<double>
-                            //(
-                            //    key: "Longitude",
-                            //    length: 11,
-                            //    conversionFromStringToDataType: dataString => double.Parse(dataString),
-                            //    conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
-                            //    conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
-                            //),
+                            new FixedWidthColumn<double>
+                            (
+                                key: "Longitude",
+                                length: 11,
+                                conversionFromStringToDataType: dataString => double.Parse(dataString),
+                                conversionFromDataToString: data => string.Format("{0:+000.000000;-000.000000}", data),
+                                conformanceTest: stringToTest => double.TryParse(stringToTest, out dummyDouble)
+                            ),
                             new FixedWidthColumn<string>
                             (
                                 key: "StreetAddress",
@@ -149,7 +126,7 @@ namespace Monarch.Controllers
                                 length: 30,
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => data,
-                                conformanceTest: stringToTest => stringToTest.Contains("@"),
+                                conformanceTest: stringToTest => true,
                                 nullable: false
                             ),
                             new FixedWidthColumn<string>
@@ -188,8 +165,24 @@ namespace Monarch.Controllers
 
                         if (!usersFile.TryRead(reader, out errorMessage))
                         {
-                            log.Add("Could not parse users file. Check the file and try again.\n" + errorMessage);
-                            throw new NotImplementedException("Couldn't read the batch file. TODO: add some way to handle this\n" + errorMessage);
+                            var error = new UserFileError
+                            {
+                                Error = "Could not parse users batch file. Check the file and try again.\n" + errorMessage,
+                                UserFileUpload = userFileUpload
+                            };
+                            userFileUpload.Log = new List<UserFileError> { error };
+                            db.SaveChanges();
+
+                            return RedirectToAction("Index", "UserFileErrors", new { userFileUpload.UserFileUploadId });
+                        }
+
+                        try
+                        {
+                            userFileUpload.SequenceNumber = usersFile.Header.Sequence;
+                        }
+                        catch (Exception e)
+                        {
+                            errors.Add("Could not get Sequence Number from header.\n " + e.Message);
                         }
 
                         var locationMaster = new LocationMaster();
@@ -198,7 +191,7 @@ namespace Monarch.Controllers
                         foreach(dynamic record in usersFile)
                         {
                             index++;
-                            string test = record.ToString();
+                            string test = record.ToString(); // TODO remove this line
                             Console.WriteLine(record);
                             try
                             {
@@ -208,7 +201,7 @@ namespace Monarch.Controllers
                                     var monitor = findMonitorFromUniqueName(record.UserName);
                                     if (monitor != null) // if there is already an existing monitor
                                     {
-                                        log.Add(string.Format(
+                                        errors.Add(string.Format(
                                             "Could not add record: [{0}] because monitor with UnquieName \'{1}\' aleady exists in the database",
                                             index,
                                             record.UserName));
@@ -223,17 +216,17 @@ namespace Monarch.Controllers
 
                                         if (organization == null)
                                         {
-                                            log.Add(string.Format(
+                                            errors.Add(string.Format(
                                                 "Could not add record: [{0}] because the record lists and Organization UniqueName: \'{1}\' that does exist.",
                                                 record.Organization));
                                             continue;
                                         }
                                     }
                                     string message;
-                                    if (!locationMaster.TryMasterLocation(null, null,
-                                        record.City, record.State, record.Country, out message))
+                                    if (!locationMaster.TryMasterLocation(record.Latitude , record.Longitude,
+                                        record.City, record.State, null, out message))
                                     {
-                                        log.Add(string.Format("Could not add record: [{0}]: {1}", index, message));
+                                        errors.Add(string.Format("Could not add record: [{0}]: {1}", index, message));
                                         continue;
                                     }
 
@@ -242,7 +235,7 @@ namespace Monarch.Controllers
                                     {
                                         City = locationMaster.City,
                                         Country = locationMaster.Country,
-                                        DisplayName = record.Name,
+                                        //DisplayName = record.Name,
                                         Latitude = locationMaster.Latitude,
                                         Longitude = locationMaster.Longitude,
                                         Organization = organization,
@@ -258,7 +251,7 @@ namespace Monarch.Controllers
                                     var reporter = findReporterFromUsername(record.UserName);
                                     if (reporter != null)
                                     {
-                                        log.Add(string.Format(
+                                        errors.Add(string.Format(
                                             "Could not add record: [{0}] because username \'{1}\' already exists.",
                                             record.UserName));
                                     }
@@ -271,7 +264,7 @@ namespace Monarch.Controllers
 
                                         if (organization == null)
                                         {
-                                            log.Add(string.Format(
+                                            errors.Add(string.Format(
                                                 "Could not add record: [{0}] because the record lists and Organization UniqueName: \'{1}\' that does exist.",
                                                 index, record.Organization));
                                             continue;
@@ -303,15 +296,26 @@ namespace Monarch.Controllers
                             }
                             catch (Exception e) // might as well catch everything just in case
                             {
-                                log.Add(string.Format("random expcetion Could not add record: [{0}]: {1}", index, e.Message));
+                                var inner = "";
+                                if (e.InnerException != null)
+                                {
+                                    inner = e.InnerException.Message;
+                                }
+                                    
+                                errors.Add(string.Format("Could not add record: [{0}]: {1}\n{2}", index, e.Message, inner));
                                 continue;
                             }
                             
                         }
                     }
                 }
-                var breakhere = "fdsfds";
-                return RedirectToAction("Index");
+
+                var log = new List<UserFileError>();
+                errors.ForEach(error => log.Add(new UserFileError { Error = error, UserFileUpload = userFileUpload }));
+                userFileUpload.Log = log;
+                db.SaveChanges();
+
+                return RedirectToAction("Index", "UserFileErrors", new { userFileUpload.UserFileUploadId } );
             }
 
             return View(userFileUpload);
@@ -392,63 +396,6 @@ namespace Monarch.Controllers
                     uniqueName));
             }
             return null;
-        }
-
-        // GET: UserFileUploads/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserFileUpload userFileUpload = db.UserFileUploads.Find(id);
-            if (userFileUpload == null)
-            {
-                return HttpNotFound();
-            }
-            return View(userFileUpload);
-        }
-
-        // POST: UserFileUploads/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserFileUploadId,ReporterId,DateTime")] UserFileUpload userFileUpload)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(userFileUpload).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(userFileUpload);
-        }
-
-        // GET: UserFileUploads/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserFileUpload userFileUpload = db.UserFileUploads.Find(id);
-            if (userFileUpload == null)
-            {
-                return HttpNotFound();
-            }
-            return View(userFileUpload);
-        }
-
-        // POST: UserFileUploads/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            UserFileUpload userFileUpload = db.UserFileUploads.Find(id);
-            db.UserFileUploads.Remove(userFileUpload);
-            db.SaveChanges();
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

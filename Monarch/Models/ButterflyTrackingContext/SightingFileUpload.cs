@@ -17,6 +17,8 @@ namespace Monarch.Models.ButterflyTrackingContext
         [Required]
         public DateTime DateTime { get; set; }
 
+        public int SequenceNumber { get; set; }
+
         // the reporter who uploaded the file
         public virtual Reporter Reporter { get; set; }
 

@@ -1,26 +1,14 @@
 ﻿@model IEnumerable<Monarch.Models.ButterflyTrackingContext.SightingFileError>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Sighting File Upload Exception Report";
 }
 
-<h2>Index</h2>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.SightingFileUpload.SightingFileUploadId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Error)
-        </th>
-        <th></th>
-    </tr>
-
+<h2>Sightings File Exception Report</h2>
+<h3><small>If you don't see anything here then, you upload was successful!</small></h3>
+<table class="table table-striped">
 @foreach (var item in Model) {
     <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.SightingFileUpload.SightingFileUploadId)
-        </td>
         <td>
             @Html.DisplayFor(modelItem => item.Error)
         </td>

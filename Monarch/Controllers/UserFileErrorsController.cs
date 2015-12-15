@@ -10,16 +10,16 @@ using Monarch.Models.ButterflyTrackingContext;
 
 namespace Monarch.Controllers
 {
-    public class SightingFileErrorsController : Controller
+    public class UserFileErrorsController : Controller
     {
         private ButterflyTrackingContext db = new ButterflyTrackingContext();
 
         // GET: SightingFileErrors
-        public ActionResult Index(int? sightingFileUploadId)
+        public ActionResult Index(int? userFileUploadId)
         {
-            var sightingFileError = db.SightingFileErrors.Where(e => e.SightingFileUploadId == sightingFileUploadId.Value);
+            var userFileError = db.UserFileErrors.Where(e => e.UserFileUploadId == userFileUploadId.Value);
             //var sightingFileError = db.SightingFileErrors.Include(s => s.SightingFileUpload);
-            return View(sightingFileError.ToList());
+            return View(userFileError.ToList());
         }
 
         protected override void Dispose(bool disposing)

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web;
 
 namespace Monarch.Models
@@ -41,6 +42,7 @@ namespace Monarch.Models
         public bool TryMasterLocation(dynamic latitude, dynamic longitude, string city, string state, string country, out string message)
         {
             clearProperties();
+            Thread.Sleep(100);
             if (latitude == null || longitude == null)
             {
                 if (city == null || state == null || country == null)

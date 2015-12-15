@@ -185,8 +185,10 @@
     <Compile Include="Controllers\OrganizationsController.cs" />
     <Compile Include="Controllers\ReportersController.cs" />
     <Compile Include="Controllers\ReporterSightingsController.cs" />
+    <Compile Include="Controllers\UserFileErrorsController.cs" />
     <Compile Include="Controllers\SightingFileErrorsController.cs" />
     <Compile Include="Controllers\SightingFileUploadsController.cs" />
+    <Compile Include="Controllers\UploadFileController.cs" />
     <Compile Include="Controllers\UserFileUploadsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -203,6 +205,7 @@
     <Compile Include="Models\ButterflyTrackingContext\ReporterDetail.cs" />
     <Compile Include="Models\ButterflyTrackingContext\SightingFileError.cs" />
     <Compile Include="Models\ButterflyTrackingContext\SightingFileUpload.cs" />
+    <Compile Include="Models\ButterflyTrackingContext\UserFileError.cs" />
     <Compile Include="Models\ButterflyTrackingContext\UserFileUpload.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -283,15 +286,7 @@
     <Content Include="Views\Organizations\Details.cshtml" />
     <Content Include="Views\Organizations\Edit.cshtml" />
     <Content Include="Views\Organizations\Index.cshtml" />
-    <Content Include="Views\SightingFileUploads\Create.cshtml" />
-    <Content Include="Views\SightingFileUploads\Delete.cshtml" />
-    <Content Include="Views\SightingFileUploads\Details.cshtml" />
-    <Content Include="Views\SightingFileUploads\Edit.cshtml" />
     <Content Include="Views\SightingFileUploads\Index.cshtml" />
-    <Content Include="Views\UserFileUploads\Create.cshtml" />
-    <Content Include="Views\UserFileUploads\Delete.cshtml" />
-    <Content Include="Views\UserFileUploads\Details.cshtml" />
-    <Content Include="Views\UserFileUploads\Edit.cshtml" />
     <Content Include="Views\UserFileUploads\Index.cshtml" />
     <Content Include="Views\ReporterSightings\Create.cshtml" />
     <Content Include="Views\ReporterSightings\Delete.cshtml" />
@@ -310,8 +305,9 @@
     <Content Include="Views\Butterflies\Index.cshtml" />
     <Content Include="Views\Reporters\EditMe.cshtml" />
     <Content Include="Views\Reporters\Me.cshtml" />
-    <Content Include="Views\SightingFileUploads\Log.cshtml" />
     <Content Include="Views\SightingFileErrors\Index.cshtml" />
+    <Content Include="Views\UploadFile\Index.cshtml" />
+    <Content Include="Views\UserFileErrors\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

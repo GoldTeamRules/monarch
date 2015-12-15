@@ -19,42 +19,8 @@ namespace Monarch.Controllers
     {
         private ButterflyTrackingContext db = new ButterflyTrackingContext();
 
-        // GET: SightingFileUploads
-        public ActionResult Index()
-        {
-            return View(db.SightingFileUploads.ToList());
-        }
-        
-        // GET: SightingFileUploads/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            SightingFileUpload sightingFileUpload = db.SightingFileUploads.Find(id);
-            if (sightingFileUpload == null)
-            {
-                return HttpNotFound();
-            }
-            return View(sightingFileUpload);
-        }
-
-        public ActionResult Log(int? id)
-        {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            SightingFileUpload sightingFileUpload = db.SightingFileUploads.Find(id);
-            if (sightingFileUpload == null)
-            {
-                return HttpNotFound();
-            }
-            return View(sightingFileUpload);
-        }
-
         // GET: SightingFileUploads/Create
-        public ActionResult Create()
+        public ActionResult Index()
         {
             return View();
         }
@@ -64,7 +30,7 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "SightingFileUploadId")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
+        public ActionResult Index([Bind(Include = "SightingFileUploadId")] SightingFileUpload sightingFileUpload, HttpPostedFileBase upload)
         {
             var errors = new List<string>();
 
@@ -84,7 +50,7 @@ namespace Monarch.Controllers
 
                     DateTime dummyDate;
                     double dummyDouble;
-                    int dummyInt;
+                    //int dummyInt;
 
                     // create the FixedWithParser object for the sightings batch file
                     var sightingsFile = new FixedWidthParser
@@ -108,7 +74,7 @@ namespace Monarch.Controllers
                                 length: 30,
                                 conversionFromStringToDataType: dataString => dataString,
                                 conversionFromDataToString: data => data,
-                                conformanceTest: stringToTest => stringToTest.Contains("@")
+                                conformanceTest: stringToTest => true
                             ),
                             new FixedWidthColumn<DateTime>
                             (
@@ -167,13 +133,13 @@ namespace Monarch.Controllers
                                 conversionFromDataToString: data => data,
                                 conformanceTest: stringToTest => true
                             ),
-                            new FixedWidthColumn<int>
+                            new FixedWidthColumn<long>
                             (
                                 key: "Tag",
                                 length: 11,
-                                conversionFromStringToDataType: dataString => int.Parse(dataString),
+                                conversionFromStringToDataType: dataString => long.Parse(dataString),
                                 conversionFromDataToString: data => data.ToString(),
-                                conformanceTest: stringToTest => int.TryParse(stringToTest, out dummyInt)
+                                conformanceTest: stringToTest => { long dummyUint; return long.TryParse(stringToTest, out dummyUint); }
                             )
                         }
                     );
@@ -186,7 +152,7 @@ namespace Monarch.Controllers
                         {
                             var error = new SightingFileError
                             {
-                                Error = "Could not parse sightings file. Check the file and try again.\n" + errorMessage,
+                                Error = "Could not parse sightings batch file. Check the file and try again.\n" + errorMessage,
                                 SightingFileUpload = sightingFileUpload
                             };
                             sightingFileUpload.Log = new List<SightingFileError> { error };
@@ -195,6 +161,16 @@ namespace Monarch.Controllers
                             return RedirectToAction("Index", "SightingFileErrors", new { sightingFileUpload.SightingFileUploadId });
 
                         }
+
+                        try
+                        {
+                            sightingFileUpload.SequenceNumber = sightingsFile.Header.Sequence;
+                        }
+                        catch (Exception e)
+                        {
+                            errors.Add("Could not get Sequence Number from header.\n " +e.Message);
+                        }
+                        
                         var locationMaster = new LocationMaster();
 
                         int index = -1;
@@ -348,7 +324,6 @@ namespace Monarch.Controllers
                 db.SaveChanges();
 
                 return RedirectToAction("Index", "SightingFileErrors", new { sightingFileUpload.SightingFileUploadId } );
-                //return RedirectToAction("Index");
             }
 
             return View(sightingFileUpload);
@@ -473,63 +448,6 @@ namespace Monarch.Controllers
             }
             message = "";
             return reporter;
-        }
-
-        // GET: SightingFileUploads/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            SightingFileUpload sightingFileUpload = db.SightingFileUploads.Find(id);
-            if (sightingFileUpload == null)
-            {
-                return HttpNotFound();
-            }
-            return View(sightingFileUpload);
-        }
-
-        // POST: SightingFileUploads/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SightingFileUploadId,ReporterId,DateTime")] SightingFileUpload sightingFileUpload)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(sightingFileUpload).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(sightingFileUpload);
-        }
-
-        // GET: SightingFileUploads/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            SightingFileUpload sightingFileUpload = db.SightingFileUploads.Find(id);
-            if (sightingFileUpload == null)
-            {
-                return HttpNotFound();
-            }
-            return View(sightingFileUpload);
-        }
-
-        // POST: SightingFileUploads/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            SightingFileUpload sightingFileUpload = db.SightingFileUploads.Find(id);
-            db.SightingFileUploads.Remove(sightingFileUpload);
-            db.SaveChanges();
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
