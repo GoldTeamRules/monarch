@@ -433,15 +433,25 @@ namespace Monarch.Controllers
             //}
         }
 
-        private Butterfly findAndVerifyButterflyForMonitors(int butterflyId, string species, out string message)
+        private Butterfly findAndVerifyButterflyForMonitors(int tag, string species, out string message)
         {
-            var butterfly = db.Butterflies.Find(butterflyId);
-            if (butterfly == null)
+            var butterflies = db.Butterflies.Where(e => e.Tag == tag);
+            if (butterflies.Count() == 0)
             {
                 message = string.Format("The tag \'{0}\' does not exist."
-                   + "Add the tag first, then you can add this record.", butterflyId);
+                   + "Add the tag first, then you can add this record.", tag);
                 return null; // throw out record and move on
+            } else if (butterflies.Count() > 1)
+            {
+                message = string.Format("ERROR: two butterflies exist with Tag: \'{0}\'"
+                        + "Contact your database administrator", tag);
+                return null;
             }
+
+            // set the butterfly
+            var butterfly = butterflies.First();
+
+
             if (butterfly.Species.ToLower() != species.ToLower())
             {
                 message = string.Format("The tag returned a butterfly with the Species \'{0}\' "

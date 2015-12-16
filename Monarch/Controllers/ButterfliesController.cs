@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
+using Microsoft.AspNet.Identity;
 
 namespace Monarch.Controllers
 {
@@ -49,17 +50,20 @@ namespace Monarch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ButterflyId,ReporterId,Species,SightingFileUploadId,Latitude,Longitude,City,StateProvince,Country,PostalCode,DateTime")] Butterfly butterfly)
+        public ActionResult Create([Bind(Include = "ButterflyId,Species,Tag,Latitude,Longitude,City,StateProvince,Country,PostalCode,DateTime")] Butterfly butterfly)
         {
-            if (ModelState.IsValid)
+            try
             {
+                butterfly.Reporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
                 db.Butterflies.Add(butterfly);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            catch (Exception e)
+            {
+                
+            }
 
-            ViewBag.ReporterId = new SelectList(db.Reporters, "ReporterId", "Name", butterfly.ReporterId);
-            ViewBag.SightingFileUploadId = new SelectList(db.SightingFileUploads, "SightingFileUploadId", "SightingFileUploadId", butterfly.SightingFileUploadId);
             return View(butterfly);
         }
 

@@ -9,8 +9,7 @@ namespace Monarch.Models.ButterflyTrackingContext
 {
     public class Butterfly
     {
-        //[Required]
-        //[DatabaseGenerated(DatabaseGeneratedOption.None)]
+        //PK
         public int ButterflyId { get; set; }
         [Required]
         public int ReporterId { get; set; }
@@ -18,6 +17,10 @@ namespace Monarch.Models.ButterflyTrackingContext
         public string Species { get; set; }
         // FK
         public int? SightingFileUploadId { get; set; }
+
+        [Required]
+        [Index(IsUnique = true)]
+        public int Tag { get; set; }
 
         // these do not represent the current location of the butterfly
         // but the location of the inital tagging

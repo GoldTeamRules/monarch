@@ -14,6 +14,53 @@
 </div>
 
 <div class="row">
+    <div class="col-md-12">
+        <h1>Hi Terry (and anyone else looking at our project)</h1>
+        <p>
+            <blockquote>
+                Hello class,
+                Please find attached what I'll be looking in this phase of your project.
+                Track from the beginning to Code/Result:
+                <ul>
+                    <li>
+                        Display all butterfly sighting history on a specific date (MM/DD/YYYY)
+                    </li>
+                    <li>
+                        Update a butterfly record from City A to City B, and its country - Here we want to see how a record can be updated, based on these attributes.
+                    </li>
+                    <li>
+                        List of all tagged butterflies on a specific date (MM/DD/YYYY)
+                    </li>
+                </ul>
+
+                Track from Result/Code to the beginning:
+                <ul>
+                    <li>Update Address from a specific user - How are you maintaining your users, how you implemented privileges restrictions and etc</li>
+                    <li>Create of a tagged butterfly record in City A, Country B, State C, Date MM/DD/YYYY, etc - with latitude YY and longitude XXX.</li>
+                    <li>Given a butterfly tag XY please show its complete route</li>
+                </ul>
+
+                Beginning can be interpreted as the first time the specified feature was mentioned/used in your project. Basically we want to traverse your work from multiple points of views and see how/where everything is connected.
+                Besides these, I will also select 06 random "things" to watch over in your overall report (e.g table of contents must reflect your report, ERD version, signatures and etc). It can be anything and vary from work to work (or not - but since everything can be traced back and forth this won't be an issue right?).
+                Good luck, I'm sure that all your effort during this term will be reflected in your project/presentation.
+                Regards,
+                T.
+            </blockquote>
+
+            To make grading easier:
+            <ul>
+                <li>
+                    Display all butterfly sighting history on a specific date (MM/DD/YYYY): @Html.ActionLink("View the sightings here","Index", "ReporterSightings")
+                </li>
+                <li>
+                    Update a butterfly record from City A to City B, and its country: @Html.ActionLink("View the butterfly tags here. Pick a tag and click EDIT to update a record.", "Index", "Butterflies")
+                </li>
+                <li>
+                    Given a butterfly tag XY please show its complete route: @Html.ActionLink("View the butterfly tags here. click a tag and to filter and see the complete route.", "Index", "Butterflies")
+                </li>
+            </ul>
+        </p>
+    </div>
     <div class="col-md-4">
         <h2>Create Sightings</h2>
         <p>
