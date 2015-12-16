@@ -43,6 +43,10 @@ namespace Monarch.Models
         {
             clearProperties();
             Thread.Sleep(150);
+            if (latitude == 0)
+                latitude = null;
+            if (longitude == 0)
+                longitude = null;
             if (latitude == null || longitude == null)
             {
                 if (city == null || state == null || country == null)

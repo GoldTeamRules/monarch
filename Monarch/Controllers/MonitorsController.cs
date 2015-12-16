@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
 using System.Web.UI.WebControls;
+using Microsoft.AspNet.Identity;
+using Monarch.Models;
 
 namespace Monarch.Controllers
 {
@@ -55,17 +57,58 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "MonitorId,UserFileUploadId,OrganizationId,UniqueName,Latitude,Longitude,DisplayName,City,StateProvince,Country,PostalCode")] Monitor monitor)
         {
-            if (ModelState.IsValid)
+           
+            try
             {
-                db.Monitors.Add(monitor);
-                db.SaveChanges();
+                var locationMaster = new LocationMaster();
+                string message;
+                if (locationMaster.TryMasterLocation(monitor.Latitude, monitor.Longitude,
+                    monitor.City, monitor.StateProvince, monitor.Country, out message))
+                {
+                    if (ModelState.IsValid)
+                    {
+                        ViewBag.Error = "";
+                        monitor.Latitude = locationMaster.Latitude;
+                        monitor.Longitude = locationMaster.Longitude;
+                        monitor.City = locationMaster.City;
+                        monitor.StateProvince = locationMaster.State;
+                        monitor.Country = locationMaster.Country;
+                        //ModelState.Clear();
+
+                        var ownwer = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                        monitor.Owner = ownwer;
+                        monitor.OwnerId = ownwer.ReporterId;
+                        db.Entry(monitor).State = System.Data.Entity.EntityState.Added;
+                        db.Monitors.Add(monitor);
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        ViewBag.Error = "";
+                        monitor.Latitude = locationMaster.Latitude;
+                        monitor.Longitude = locationMaster.Longitude;
+                        monitor.City = locationMaster.City;
+                        monitor.StateProvince = locationMaster.State;
+                        monitor.Country = locationMaster.Country;
+                        ModelState.Clear();
+                        ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", monitor.OrganizationId);
+                        return View(monitor);
+                    }
+                }
+                else
+                {
+                    ViewBag.Error = message;
+                    return View(monitor);
+                }
+                
                 return RedirectToAction("Index");
             }
-
-            //ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", monitor.OrganizationId);
-            ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", monitor.OrganizationId);
-            ViewBag.UserFileUploadId = new SelectList(db.UserFileUploads, "UserFileUploadId", "UserFileUploadId", monitor.UserFileUploadId);
-            return View(monitor);
+            catch (Exception e)
+            {
+                ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", monitor.OrganizationId);
+                ViewBag.Exception = e.Message + " Are you missing a field?";
+                return View(monitor);
+            }
         }
 
         // GET: Monitors/Edit/5

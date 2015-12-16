@@ -15,7 +15,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <h1>Hi Terry (and anyone else looking at our project)</h1>
+        <h1><b>Hi Terry</b> (and anyone else looking at our project)</h1>
         <p>
             <blockquote>
                 Hello class,
@@ -47,18 +47,39 @@
                 T.
             </blockquote>
 
-            To make grading easier:
+            <h2>To make grading easier,</h2>
+            <ul>
+                <li></li>
+            </ul>
+            <p>
+                Please start by deleting every entity in the database (this could take over 5 minutes). Be careful, there is no confirmation.
+            </p>
+
             <ul>
                 <li>
-                    Display all butterfly sighting history on a specific date (MM/DD/YYYY): @Html.ActionLink("View the sightings here","Index", "ReporterSightings")
+                    Display all butterfly sighting history on a specific date (MM/DD/YYYY): @Html.ActionLink("View the sightings here. FILTER (top right) by Date.", "Index", "ReporterSightings")
                 </li>
                 <li>
                     Update a butterfly record from City A to City B, and its country: @Html.ActionLink("View the butterfly tags here. Pick a tag and click EDIT to update a record.", "Index", "Butterflies")
                 </li>
                 <li>
-                    Given a butterfly tag XY please show its complete route: @Html.ActionLink("View the butterfly tags here. click a tag and to filter and see the complete route.", "Index", "Butterflies")
+                    List of all tagged butterflies on a specific date: @Html.ActionLink("View the butterfly tags here. click a tag and to filter and see the complete route.", "Index", "Butterflies")
                 </li>
             </ul>
+
+            <ul>
+                <li>
+                    Update Address from a specific user: @Html.ActionLink("View the Reporters and update their info by EDITING it", "Index", "Reporters")
+                </li>
+                <li>
+                    Create of a tagged butterfly record: @Html.ActionLink("Click here", "Create", "Butterflies")
+                </li>
+                <li>
+                    Given a butterfly tag XY please show its complete route: @Html.ActionLink("View the butterfly tags here. Click a tag and to filter and see the complete route.", "Index", "Butterflies")
+                </li>
+            </ul>
+
+            
         </p>
     </div>
     <div class="col-md-4">

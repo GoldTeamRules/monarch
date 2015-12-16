@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using System.Data.Linq;
-
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace Monarch.Models.ButterflyTrackingContext
 {
@@ -30,16 +30,14 @@ namespace Monarch.Models.ButterflyTrackingContext
         public DbSet<Reporter> Reporters { get; set; }
         public DbSet<SightingFileError> SightingFileErrors { get; set; }
         public DbSet<UserFileError> UserFileErrors { get; set; }
-        //public DbSet<ReporterDetail> ReporterDetails { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            //modelBuilder.Entity<SightingFileUpload>().HasRequired(i => i.Reporter).WithOptional().WillCascadeOnDelete(false);
             modelBuilder.Entity<Reporter>().HasOptional(i => i.UserFileUpload).WithOptionalPrincipal();
             modelBuilder.Entity<Organization>().HasOptional(i => i.Owner).WithOptionalPrincipal();
-            //modelBuilder.Entity<SightingFileUpload>().HasMany(i => i.Log).;
+            modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
         }
 
         public Reporter GetReporterFromUserId(string userId, string userName)

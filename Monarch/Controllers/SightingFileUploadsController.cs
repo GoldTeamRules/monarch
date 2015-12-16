@@ -272,8 +272,12 @@ namespace Monarch.Controllers
                                 else if (record.Event.ToUpper() == "T")
                                 {
                                     // check to see if butterfly tag exists in system (it shouldn't)
-                                    var butterfly = db.Butterflies.Find(record.Tag); // this returns null if it can't find the element
-                                    if (butterfly != null) // so if this value isn't null then we found a tag
+                                    //var butterfly = db.Butterflies.Find(record.Tag); // this returns null if it can't find the element
+                                    int tag = record.Tag;
+                                    var butterflies = db.Butterflies.Where(e => e.Tag == tag);
+
+                                    //Butterfly butterfly;
+                                    if (butterflies.Count() >= 1)
                                     {
                                         errors.Add(
                                             string.Format("Could not add record: [{0}] because the tag \'{1}\' already exists.",
@@ -314,7 +318,8 @@ namespace Monarch.Controllers
                                         Reporter = tagger,
                                         SightingFileUpload = sightingFileUpload,
                                         Species = record.Species,
-                                        StateProvince = locationMaster.State
+                                        StateProvince = locationMaster.State,
+                                        Tag = tag
                                     });
                                     db.SaveChanges();
                                 }

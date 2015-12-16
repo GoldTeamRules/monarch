@@ -310,6 +310,7 @@
     <Content Include="Views\Butterflies\Edit.cshtml" />
     <Content Include="Views\Butterflies\Index.cshtml" />
     <Content Include="Views\Leaderboard\Index.cshtml" />
+    <Content Include="Views\Home\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

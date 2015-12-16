@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
 using Microsoft.AspNet.Identity;
+using Monarch.Models;
 
 namespace Monarch.Controllers
 {
@@ -52,28 +53,58 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ReporterSightingId,SightingFileUploadId,Latitude,Longitude,DateTime,City,StateProvince,Country,PostalCode")] ReporterSighting reporterSighting)
         {
-            try {
-                if (ModelState.IsValid)
+            try
+            {
+                var locationMaster = new LocationMaster();
+                string message;
+                if (locationMaster.TryMasterLocation(reporterSighting.Latitude, reporterSighting.Longitude,
+                    reporterSighting.City, reporterSighting.StateProvince, reporterSighting.Country, out message))
                 {
+                    if (ModelState.IsValid)
+                    {
 
-                    var testvar = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
-                    reporterSighting.Reporter = testvar;
-                    reporterSighting.ReporterId = testvar.ReporterId;
-                    
-                    db.ReporterSightings.Add(reporterSighting);
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
+                        ViewBag.Error = "";
+                        reporterSighting.Latitude = locationMaster.Latitude;
+                        reporterSighting.Longitude = locationMaster.Longitude;
+                        reporterSighting.City = locationMaster.City;
+                        reporterSighting.StateProvince = locationMaster.State;
+                        reporterSighting.Country = locationMaster.Country;
+                        //ModelState.Clear();
+
+                        var user = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                        reporterSighting.Reporter = user;
+                        reporterSighting.ReporterId = user.ReporterId;
+                        db.Entry(reporterSighting).State = System.Data.Entity.EntityState.Added;
+                        db.ReporterSightings.Add(reporterSighting);
+                        db.SaveChanges();
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ViewBag.Error = "";
+                        reporterSighting.Latitude = locationMaster.Latitude;
+                        reporterSighting.Longitude = locationMaster.Longitude;
+                        reporterSighting.City = locationMaster.City;
+                        reporterSighting.StateProvince = locationMaster.State;
+                        reporterSighting.Country = locationMaster.Country;
+                        ModelState.Clear();
+                        //ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", reporterSighting.OrganizationId);
+                        return View(reporterSighting);
+                    }
+                }
+                else
+                {
+                    ViewBag.Error = message;
+                    return View(reporterSighting);
                 }
 
-                //ViewBag.ReporterId = new SelectList(db.Reporters, "ReporterId", "Name", reporterSighting.ReporterId);
-                //ViewBag.SightingFileUploadId = new SelectList(db.SightingFileUploads, "SightingFileUploadId", "SightingFileUploadId", reporterSighting.SightingFileUploadId);
-                return View(reporterSighting);
-
+                return RedirectToAction("Index");
             }
             catch (Exception e)
             {
+                //ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", reporterSighting.OrganizationId);
+                ViewBag.Exception = e.Message + " Are you missing a field? ";
                 return View(reporterSighting);
-
             }
         }
 

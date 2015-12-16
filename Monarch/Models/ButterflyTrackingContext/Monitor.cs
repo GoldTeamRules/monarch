@@ -16,6 +16,9 @@ namespace Monarch.Models.ButterflyTrackingContext
        // [DisplayName("OrganizationId")]
         public int? OrganizationId { get; set; }
 
+        [Required]
+        public int OwnerId { get; set; }
+
         // required fields
         [Required]
         [Index(IsUnique = true), StringLength(500)]
@@ -33,6 +36,7 @@ namespace Monarch.Models.ButterflyTrackingContext
         public string PostalCode { get; set; }
         
         // linked entities
+        public virtual Reporter Owner { get; set; }
         public virtual Organization Organization { get; set; }
         public virtual UserFileUpload UserFileUpload { get; set; }
     }

@@ -290,7 +290,8 @@ namespace Monarch.Controllers
                                         CellPhone = record.CellPhone,
                                         HomePhone = record.HomePhone,
                                         StreetAddress = record.StreetAddress,
-                                        Organization = organization
+                                        Organization = organization,
+                                        Name = record.Name
                                     };
 
                                     db.Reporters.Add(reporterToBeAdded);

@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Monarch.Models.ButterflyTrackingContext;
 using Microsoft.AspNet.Identity;
+using Monarch.Models;
 
 namespace Monarch.Controllers
 {
@@ -54,17 +55,57 @@ namespace Monarch.Controllers
         {
             try
             {
-                butterfly.Reporter = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
-                db.Butterflies.Add(butterfly);
-                db.SaveChanges();
+                var locationMaster = new LocationMaster();
+                string message;
+                if (locationMaster.TryMasterLocation(butterfly.Latitude, butterfly.Longitude,
+                    butterfly.City, butterfly.StateProvince, butterfly.Country, out message))
+                {
+                    if (ModelState.IsValid)
+                    {
+
+                        ViewBag.Error = "";
+                        butterfly.Latitude = locationMaster.Latitude;
+                        butterfly.Longitude = locationMaster.Longitude;
+                        butterfly.City = locationMaster.City;
+                        butterfly.StateProvince = locationMaster.State;
+                        butterfly.Country = locationMaster.Country;
+                        //ModelState.Clear();
+
+                        var user = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                        butterfly.Reporter = user;
+                        butterfly.ReporterId = user.ReporterId;
+                        db.Entry(butterfly).State = System.Data.Entity.EntityState.Added;
+                        db.Butterflies.Add(butterfly);
+                        db.SaveChanges();
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ViewBag.Error = "";
+                        butterfly.Latitude = locationMaster.Latitude;
+                        butterfly.Longitude = locationMaster.Longitude;
+                        butterfly.City = locationMaster.City;
+                        butterfly.StateProvince = locationMaster.State;
+                        butterfly.Country = locationMaster.Country;
+                        ModelState.Clear();
+                        //ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", reporterSighting.OrganizationId);
+                        return View(butterfly);
+                    }
+                }
+                else
+                {
+                    ViewBag.Error = message;
+                    return View(butterfly);
+                }
+
                 return RedirectToAction("Index");
             }
             catch (Exception e)
             {
-                
+                //ViewBag.OrganizationId = new SelectList(db.Organizations, "OrganizationId", "UniqueName", reporterSighting.OrganizationId);
+                ViewBag.Exception = e.Message + " Are you missing a field? ";
+                return View(butterfly);
             }
-
-            return View(butterfly);
         }
 
         // GET: Butterflies/Edit/5
