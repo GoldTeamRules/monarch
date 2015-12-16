@@ -180,6 +180,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ButterfliesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LeaderboardController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MonitorsController.cs" />
     <Compile Include="Controllers\MonitorSightingsController.cs" />
@@ -293,11 +294,6 @@
     <Content Include="Views\MonitorSightings\Details.cshtml" />
     <Content Include="Views\MonitorSightings\Edit.cshtml" />
     <Content Include="Views\MonitorSightings\Index.cshtml" />
-    <Content Include="Views\Butterflies\Create.cshtml" />
-    <Content Include="Views\Butterflies\Delete.cshtml" />
-    <Content Include="Views\Butterflies\Details.cshtml" />
-    <Content Include="Views\Butterflies\Edit.cshtml" />
-    <Content Include="Views\Butterflies\Index.cshtml" />
     <Content Include="Views\Reporters\Me.cshtml" />
     <Content Include="Views\SightingFileErrors\Index.cshtml" />
     <Content Include="Views\UploadFile\Index.cshtml" />
@@ -308,6 +304,12 @@
     <Content Include="Views\Organizations\Edit.cshtml" />
     <Content Include="Views\Organizations\Index.cshtml" />
     <Content Include="Views\Reporters\EditMe.cshtml" />
+    <Content Include="Views\Butterflies\Create.cshtml" />
+    <Content Include="Views\Butterflies\Delete.cshtml" />
+    <Content Include="Views\Butterflies\Details.cshtml" />
+    <Content Include="Views\Butterflies\Edit.cshtml" />
+    <Content Include="Views\Butterflies\Index.cshtml" />
+    <Content Include="Views\Leaderboard\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

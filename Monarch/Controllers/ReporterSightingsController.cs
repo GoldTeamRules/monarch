@@ -52,20 +52,29 @@ namespace Monarch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ReporterSightingId,SightingFileUploadId,Latitude,Longitude,DateTime,City,StateProvince,Country,PostalCode")] ReporterSighting reporterSighting)
         {
-            if (ModelState.IsValid)
-            {
-                
-                var testvar = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
-                reporterSighting.Reporter = testvar;
-                reporterSighting.ReporterId = testvar.ReporterId;
-                db.ReporterSightings.Add(reporterSighting);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+            try {
+                if (ModelState.IsValid)
+                {
 
-            ViewBag.ReporterId = new SelectList(db.Reporters, "ReporterId", "Name", reporterSighting.ReporterId);
-            ViewBag.SightingFileUploadId = new SelectList(db.SightingFileUploads, "SightingFileUploadId", "SightingFileUploadId", reporterSighting.SightingFileUploadId);
-            return View(reporterSighting);
+                    var testvar = db.GetReporterFromUserId(User.Identity.GetUserId(), User.Identity.Name);
+                    reporterSighting.Reporter = testvar;
+                    reporterSighting.ReporterId = testvar.ReporterId;
+                    
+                    db.ReporterSightings.Add(reporterSighting);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+
+                //ViewBag.ReporterId = new SelectList(db.Reporters, "ReporterId", "Name", reporterSighting.ReporterId);
+                //ViewBag.SightingFileUploadId = new SelectList(db.SightingFileUploads, "SightingFileUploadId", "SightingFileUploadId", reporterSighting.SightingFileUploadId);
+                return View(reporterSighting);
+
+            }
+            catch (Exception e)
+            {
+                return View(reporterSighting);
+
+            }
         }
 
         // GET: ReporterSightings/Edit/5

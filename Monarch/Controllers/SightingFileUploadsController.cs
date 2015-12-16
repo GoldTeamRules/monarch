@@ -48,7 +48,6 @@ namespace Monarch.Controllers
                     db.SightingFileUploads.Add(sightingFileUpload);
                     db.SaveChanges();
 
-
                     DateTime dummyDate;
                     double dummyDouble;
                     //int dummyInt;
@@ -247,24 +246,21 @@ namespace Monarch.Controllers
                                         }
 
                                         // verify the location
-                                        double lat = -1;
-                                        double lng = -1;
-                                        if (record.Latitude != null && record.Longitude != null)
-                                        {
-                                            lat = record.Latitude;
-                                            lng = record.Longitude;
-                                        }
+                                        
+                                        
+                                        
 
-                                        var monitor = findAndVerifyMonitor(record.UserNameOrReporterId, lat, lng, out message);
+                                        var monitor = findAndVerifyMonitor(record.UserNameOrReporterId, out message);
                                         if (monitor == null) // couldn't find or verify the monitor
                                         {
                                             errors.Add(string.Format("Could not add record [{0}] {1}", index, message));
                                             continue;
                                         }
-
+                                        int tag = record.Tag;
                                         // WE ADDED A NEW SIGHTINGS ENTRY YAYEYAHAYAYYAY!!!
                                         db.MonitorSightings.Add(new MonitorSighting
                                         {
+                                            //ButterflyId = tag,
                                             Butterfly = butterfly,
                                             DateTime = record.DateTime,
                                             Monitor = monitor,
@@ -380,7 +376,7 @@ namespace Monarch.Controllers
             return View(sightingFileUpload);
         }
 
-        private Monitor findAndVerifyMonitor(string uniqueNameOrMonitorId, double latitude, double longitude, out string message)
+        private Monitor findAndVerifyMonitor(string uniqueNameOrMonitorId, out string message)
         {
             int monitorId;
             Monitor monitor;
@@ -422,24 +418,19 @@ namespace Monarch.Controllers
                 }
             }
 
-            // check to see if latitude and longitude roughly match
-            if (Math.Round(monitor.Latitude) == Math.Round(latitude)
-                && Math.Round(monitor.Longitude) == Math.Round(longitude))
-            {
+            //// check to see if latitude and longitude roughly match
+            //if (true)
+            //{
                 message = "";
                 return monitor;
-            }
-            else
-            {
-                if (latitude == -1 || longitude == -1)
-                {
-                    message = "Could get read location of sighting from this monitor \'{0}\'. Are you missing one coordinate? The latitude and longtidue are not required for sightings by monitors.";
-                    return null;
-                }
-                message = string.Format("Location of monitor \'{0}\' from database is: ({1},{2})"
-                    + " and location or record: ({3},{4})", monitor.UniqueName, monitor.Latitude, monitor.Longitude, latitude, longitude);
-                return null;
-            }
+            //}
+            //else
+            //{
+                
+            //    message = string.Format("Location of monitor \'{0}\' from database is: ({1},{2})"
+            //        + " and location or record: ({3},{4})", monitor.UniqueName, monitor.Latitude, monitor.Longitude);
+            //    return null;
+            //}
         }
 
         private Butterfly findAndVerifyButterflyForMonitors(int butterflyId, string species, out string message)
