@@ -47,14 +47,7 @@
                     <li>@Html.ActionLink("Monitors", "Index", "Monitors")</li>
                     <li>@Html.ActionLink("Organizations", "Index", "Organizations")</li>
                     <li>@Html.ActionLink("Leaderboards", "Index", "Leaderboard")</li>
-                    <li>
-                        <a href="@Url.Action("Index", "UploadFile")" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Upload<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="@Url.Action("Index", "UploadFile")">Upload…</a></li>
-                            <li><a href="@Url.Action("Index", "UserFileUploads")">Users batch file…</a></li>
-                            <li><a href="@Url.Action("Index", "SightingFileUploads")">Sightings batch file…</a></li>
-                        </ul>
-                    </li>
+                    <li>@Html.ActionLink("Upload", "Index", "UploadFile")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
@@ -62,7 +55,7 @@
         </div>
     </div>
     <div class="container">
-        <div class="alert alert-warning" role="alert">Tableau username: ricokahler@me.com Tableau Password: Goldteamrule5</div>
+        <div class="alert alert-warning" role="alert">Tableau username: ricokahler@me.com Tableau Password: Goldteamrule5. To use tableau, please login and refresh. Thank you!</div>
 
     @if (!User.Identity.IsAuthenticated)
     {
